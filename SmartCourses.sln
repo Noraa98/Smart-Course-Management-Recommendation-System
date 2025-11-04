@@ -3,7 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35521.163 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartCourses.DAL", "SmartCourses.DAL\SmartCourses.DAL.csproj", "{C984EB05-4116-4B3F-BA46-67411E717231}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartCourses.BLL", "SmartCourses.BLL\SmartCourses.BLL.csproj", "{CEF66279-F746-435B-8F13-70C197A414F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartCourses.PL", "SmartCourses.PL\SmartCourses.PL.csproj", "{D5600412-2187-45B8-ADF1-2348E9D35BCB}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C984EB05-4116-4B3F-BA46-67411E717231}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C984EB05-4116-4B3F-BA46-67411E717231}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C984EB05-4116-4B3F-BA46-67411E717231}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C984EB05-4116-4B3F-BA46-67411E717231}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEF66279-F746-435B-8F13-70C197A414F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEF66279-F746-435B-8F13-70C197A414F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEF66279-F746-435B-8F13-70C197A414F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEF66279-F746-435B-8F13-70C197A414F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5600412-2187-45B8-ADF1-2348E9D35BCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5600412-2187-45B8-ADF1-2348E9D35BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5600412-2187-45B8-ADF1-2348E9D35BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5600412-2187-45B8-ADF1-2348E9D35BCB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
