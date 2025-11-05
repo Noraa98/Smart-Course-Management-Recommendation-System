@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SmartCourses.DAL.Contracts.Repositories
 {
-    internal interface INotificationRepository : IGenericRepository<Notification>
+    public interface INotificationRepository : IGenericRepository<Notification>
     {
     }
 }

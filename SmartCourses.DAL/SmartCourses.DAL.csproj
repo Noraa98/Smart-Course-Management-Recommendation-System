@@ -14,7 +14,6 @@
 	
   <ItemGroup>
     <Folder Include="Persistence\Data\Migrations\" />
-    <Folder Include="Persistence\UnitOfWork\" />
   </ItemGroup>
 
   <ItemGroup>

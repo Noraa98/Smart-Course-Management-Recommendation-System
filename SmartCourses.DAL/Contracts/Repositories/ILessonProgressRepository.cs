@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SmartCourses.DAL.Contracts.Repositories
 {
-    internal interface ILessonProgressRepository : IGenericRepository<LessonProgress>
+    public interface ILessonProgressRepository : IGenericRepository<LessonProgress>
     {
     }
 }
