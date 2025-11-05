@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartCourses.DAL.Contracts.Repositories
+namespace SmartCourses.BLL.Services.Contracts
 {
-    public interface INotificationRepository : IGenericRepository<Notification>
+    public interface ILessonProgressService : IGenericService<LessonProgress>
     {
+
     }
 }

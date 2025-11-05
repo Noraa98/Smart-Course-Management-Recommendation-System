@@ -1,82 +1,188 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SmartCourses.DAL.Contracts.Repositories;
+using SmartCourses.DAL.Common.Entities;
 using SmartCourses.DAL.Persistence.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SmartCourses.DAL.Persistence.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey>
+        where TEntity : class
+        where TKey : IEquatable<TKey>
     {
         protected readonly ApplicationDbContext _context;
-        protected readonly DbSet<T> _dbSet;
+        protected readonly DbSet<TEntity> _dbSet;
 
         public GenericRepository(ApplicationDbContext context)
         {
             _context = context;
-            _dbSet = _context.Set<T>();
+            _dbSet = context.Set<TEntity>();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(
-            Expression<Func<T, bool>>? filter = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-            string includeProperties = "")
+        // Query Methods
+
+        public virtual async Task<TEntity?> GetByIdAsync(TKey id)
         {
-            IQueryable<T> query = _dbSet;
+            return await _dbSet.FindAsync(id);
+        }
 
-            if (filter != null)
-                query = query.Where(filter);
+        public virtual async Task<TEntity?> GetByIdAsync(TKey id, params Expression<Func<TEntity, object>>[] includes)
+        {
+            IQueryable<TEntity> query = _dbSet;
+            query = includes.Aggregate(query, (current, include) => current.Include(include));
 
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
+            // Build expression for Id comparison
+            var parameter = Expression.Parameter(typeof(TEntity), "e");
+            var property = Expression.Property(parameter, "Id");
+            var constant = Expression.Constant(id);
+            var equality = Expression.Equal(property, constant);
+            var lambda = Expression.Lambda<Func<TEntity, bool>>(equality, parameter);
 
-            if (orderBy != null)
-                return await orderBy(query).ToListAsync();
+            return await query.FirstOrDefaultAsync(lambda);
+        }
 
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
+        {
+            return await _dbSet.ToListAsync();
+        }
+
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
+        {
+            IQueryable<TEntity> query = _dbSet;
+            query = includes.Aggregate(query, (current, include) => current.Include(include));
             return await query.ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
-
-        public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, string includeProperties = "")
+        public virtual async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            IQueryable<T> query = _dbSet;
+            return await _dbSet.Where(predicate).ToListAsync();
+        }
 
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
+        public virtual async Task<IEnumerable<TEntity>> FindAsync(
+            Expression<Func<TEntity, bool>> predicate,
+            params Expression<Func<TEntity, object>>[] includes)
+        {
+            IQueryable<TEntity> query = _dbSet;
+            query = includes.Aggregate(query, (current, include) => current.Include(include));
+            return await query.Where(predicate).ToListAsync();
+        }
 
+        public virtual async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _dbSet.FirstOrDefaultAsync(predicate);
+        }
+
+        public virtual async Task<TEntity?> FirstOrDefaultAsync(
+            Expression<Func<TEntity, bool>> predicate,
+            params Expression<Func<TEntity, object>>[] includes)
+        {
+            IQueryable<TEntity> query = _dbSet;
+            query = includes.Aggregate(query, (current, include) => current.Include(include));
             return await query.FirstOrDefaultAsync(predicate);
         }
 
-        public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
-
-        public async Task AddRangeAsync(IEnumerable<T> entities) => await _dbSet.AddRangeAsync(entities);
-
-        public void Update(T entity) => _dbSet.Update(entity);
-
-        public void Delete(T entity) => _dbSet.Remove(entity);
-
-        public void DeleteRange(IEnumerable<T> entities) => _dbSet.RemoveRange(entities);
-
-        public async Task<int> CountAsync(Expression<Func<T, bool>>? filter = null)
+        public virtual async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            if (filter != null)
-                return await _dbSet.CountAsync(filter);
-
-            return await _dbSet.CountAsync();
+            return await _dbSet.AnyAsync(predicate);
         }
 
-        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
-            => await _dbSet.AnyAsync(predicate);
+        public virtual async Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null)
+        {
+            return predicate == null
+                ? await _dbSet.CountAsync()
+                : await _dbSet.CountAsync(predicate);
+        }
+
+      
+        // Command Methods
+
+        public virtual async Task<TEntity> AddAsync(TEntity entity)
+        {
+            await _dbSet.AddAsync(entity);
+            return entity;
+        }
+
+        public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+        }
+
+        public virtual void Update(TEntity entity)
+        {
+            _dbSet.Update(entity);
+        }
+
+        public virtual void UpdateRange(IEnumerable<TEntity> entities)
+        {
+            _dbSet.UpdateRange(entities);
+        }
+
+        public virtual void Delete(TEntity entity)
+        {
+            _dbSet.Remove(entity);
+        }
+
+        public virtual void DeleteRange(IEnumerable<TEntity> entities)
+        {
+            _dbSet.RemoveRange(entities);
+        }
+
+        public virtual void SoftDelete(TEntity entity)
+        {
+            if (entity is BaseAuditableEntity<TKey> auditableEntity)
+            {
+                auditableEntity.IsDeleted = true;
+                Update(entity);
+            }
+            else
+            {
+                Delete(entity);
+            }
+        }
+
+        public virtual void SoftDeleteRange(IEnumerable<TEntity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                SoftDelete(entity);
+            }
+        }
+
+        // Pagination Methods
+        public virtual async Task<(IEnumerable<TEntity> Items, int TotalCount)> GetPagedAsync(
+            int pageNumber,
+            int pageSize,
+            Expression<Func<TEntity, bool>>? predicate = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+            params Expression<Func<TEntity, object>>[] includes)
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            // Apply includes
+            query = includes.Aggregate(query, (current, include) => current.Include(include));
+
+            // Apply filter
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            // Get total count
+            var totalCount = await query.CountAsync();
+
+            // Apply ordering
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            // Apply pagination
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
     }
 }
+

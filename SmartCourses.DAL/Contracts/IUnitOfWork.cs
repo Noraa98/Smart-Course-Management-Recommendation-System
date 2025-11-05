@@ -7,20 +7,37 @@ using System.Threading.Tasks;
 
 namespace SmartCourses.DAL.Contracts
 {
-    public interface IUnitOfWork : IAsyncDisposable
+    public interface IUnitOfWork : IDisposable
     {
-        ICategoryRepository Categories { get; }
-        ISkillRepository Skills { get; }
+        // Repositories
         ICourseRepository Courses { get; }
-        ISectionRepository Sections { get; }
-        ILessonRepository Lessons { get; }
-        ILessonProgressRepository LessonProgress { get; }
         IEnrollmentRepository Enrollments { get; }
         IReviewRepository Reviews { get; }
-        INotificationRepository Notifications { get; }
-        IUserSkillRepository UserSkills { get; }
-        ICourseSkillRepository CourseSkills { get; }
+        ICategoryRepository Categories { get; }
+        ISkillRepository Skills { get; }
+        ILessonProgressRepository LessonProgresses { get; }
 
-        Task<int> CompleteAsync();
+        
+        // Generic Repository Access
+        IGenericRepository<TEntity, TKey> Repository<TEntity, TKey>()
+            where TEntity : class
+            where TKey : IEquatable<TKey>;
+
+        
+        // Transaction Methods
+        
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+        
+        int SaveChanges();
+
+       
+        Task BeginTransactionAsync();
+
+       
+        Task CommitTransactionAsync();
+
+       
+        Task RollbackTransactionAsync();
     }
 }

@@ -23,6 +23,7 @@ namespace SmartCourses.PL
             //  Register Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
+                // Password settings
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = true;
@@ -30,6 +31,12 @@ namespace SmartCourses.PL
                 options.Password.RequiredLength = 8;
                 options.Password.RequiredUniqueChars = 1;
 
+                // Lockout settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+
+                // User settings
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedEmail = false;
             })

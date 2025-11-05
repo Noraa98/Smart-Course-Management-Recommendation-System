@@ -1,33 +1,69 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 
-namespace SmartCourses.DAL.Contracts.Repositories
+public interface IGenericRepository<TEntity, TKey>
+        where TEntity : class
+        where TKey : IEquatable<TKey>
 {
-    public interface IGenericRepository<T> where T : class
-    {
-        Task<IEnumerable<T>> GetAllAsync(
-            Expression<Func<T, bool>>? filter = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-            string includeProperties = "");
+    // Query Methods
+    Task<TEntity?> GetByIdAsync(TKey id);
 
-        Task<T?> GetByIdAsync(int id);
+    
+    Task<TEntity?> GetByIdAsync(TKey id, params Expression<Func<TEntity, object>>[] includes);
 
-        Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, string includeProperties = "");
+    
+    Task<IEnumerable<TEntity>> GetAllAsync();
 
-        Task AddAsync(T entity);
-        Task AddRangeAsync(IEnumerable<T> entities);
+   
+    Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes);
 
-        void Update(T entity);
+    
+    Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
 
-        void Delete(T entity);
-        void DeleteRange(IEnumerable<T> entities);
+   
+    Task<IEnumerable<TEntity>> FindAsync(
+        Expression<Func<TEntity, bool>> predicate,
+        params Expression<Func<TEntity, object>>[] includes);
 
-        Task<int> CountAsync(Expression<Func<T, bool>>? filter = null);
+   
+    Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
 
-        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
-    }
+    
+    Task<TEntity?> FirstOrDefaultAsync(
+        Expression<Func<TEntity, bool>> predicate,
+        params Expression<Func<TEntity, object>>[] includes);
+
+   
+    Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
+
+    
+    Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null);
+
+   
+    // Command Methods
+    Task<TEntity> AddAsync(TEntity entity);
+
+    Task AddRangeAsync(IEnumerable<TEntity> entities);
+
+ 
+    void Update(TEntity entity);
+
+    void UpdateRange(IEnumerable<TEntity> entities);
+
+    void Delete(TEntity entity);
+
+    void DeleteRange(IEnumerable<TEntity> entities);
+
+    void SoftDelete(TEntity entity);
+
+    
+    void SoftDeleteRange(IEnumerable<TEntity> entities);
+
+   
+    // Pagination Methods
+    Task<(IEnumerable<TEntity> Items, int TotalCount)> GetPagedAsync(
+        int pageNumber,
+        int pageSize,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        params Expression<Func<TEntity, object>>[] includes);
 }
