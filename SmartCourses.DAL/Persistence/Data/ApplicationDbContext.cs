@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SmartCourses.DAL.Common.Entities;
 using SmartCourses.DAL.Entities;
 using SmartCourses.DAL.Entities.Identity;
 using SmartCourses.DAL.Entities.RelationshipsTables;
@@ -111,12 +112,12 @@ namespace SmartCourses.DAL.Persistence.Data
         private void HandleAuditableEntities()
         {
             var entries = ChangeTracker.Entries()
-                .Where(e => e.Entity is Common.Entities.BaseAuditableEntity<int> &&
+                .Where(e => e.Entity is BaseAuditableEntity<int> &&
                            (e.State == EntityState.Added || e.State == EntityState.Modified));
 
             foreach (var entry in entries)
             {
-                var entity = (Common.Entities.BaseAuditableEntity<int>)entry.Entity;
+                var entity = (BaseAuditableEntity<int>)entry.Entity;
 
                 if (entry.State == EntityState.Added)
                 {
