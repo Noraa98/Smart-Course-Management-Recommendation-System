@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Identity;
+using Serilog;
+using SmartCourses.BLL;
 using SmartCourses.DAL.Contracts;
 using SmartCourses.DAL.Entities.Identity;
 using SmartCourses.DAL.Persistence;
@@ -13,12 +15,52 @@ namespace SmartCourses.PL
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            // Configure Serilog
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .WriteTo.Console()
+                .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
+
+
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
 
             // Register DAL Services
             builder.Services.AddDALServices(builder.Configuration);
+
+
+            // BLL Services (AutoMapper, Business Services)
+            builder.Services.AddBLLServices();
+
+
+            // Session (Optional - for shopping cart, etc.)
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+
+            // Configure Cookie Settings
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.LogoutPath = "/Account/Logout";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                options.SlidingExpiration = true;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+            });
+
 
             //  Register Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -48,6 +90,24 @@ namespace SmartCourses.PL
 
             var app = builder.Build();
 
+
+            // Seed Database
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var dbInitializer = services.GetRequiredService<IDbInitializer>();
+                     dbInitializer.Initialize();
+                    Log.Information("Database initialized successfully");
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "An error occurred while initializing the database");
+                }
+            }
+
             // Initialize and seed the database
             using (var scope = app.Services.CreateScope())
             {
@@ -75,7 +135,21 @@ namespace SmartCourses.PL
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
-            app.Run();
+
+            // Run Application
+            try
+            {
+                Log.Information("Starting Smart Courses Application");
+                app.Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Application terminated unexpectedly");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
     }
 }
