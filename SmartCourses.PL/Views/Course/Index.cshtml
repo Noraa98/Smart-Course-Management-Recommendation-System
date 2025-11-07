@@ -1,0 +1,297 @@
+﻿@using SmartCourses.BLL.Models.DTOs.CourseDTOs
+@using SmartCourses.BLL.Models.DTOs.Response_ResultDTOs
+
+@model PaginatedResultDto<CourseListDto>
+
+@{
+    ViewData["Title"] = "All Courses";
+    var categories = ViewBag.Categories as List<CategoryDto> ?? new List<CategoryDto>();
+    var skills = ViewBag.Skills as List<SkillDto> ?? new List<SkillDto>();
+    var filter = ViewBag.Filter as CourseFilterDto ?? new CourseFilterDto();
+}
+
+<div class="bg-primary text-white py-4 mb-4">
+    <div class="container">
+        <h1 class="mb-0"><i class="bi bi-book-fill"></i> Browse Courses</h1>
+        <p class="mb-0">Discover your next learning adventure</p>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-funnel"></i> Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Index" method="get">
+                        <!-- Search -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Search</label>
+                            <input type="text" name="searchTerm" class="form-control"
+                                   placeholder="Search courses..." value="@filter.SearchTerm" />
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Category</label>
+                            <select name="categoryId" class="form-select">
+                                <option value="">All Categories</option>
+                                @foreach (var category in categories)
+                                {
+                                    <option value="@category.Id"
+                                            selected="@(filter.CategoryId == category.Id)">
+                                        @category.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Level -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Level</label>
+                            <select name="level" class="form-select">
+                                <option value="">All Levels</option>
+                                <option value="1" selected="@(filter.Level == 1)">Beginner</option>
+                                <option value="2" selected="@(filter.Level == 2)">Intermediate</option>
+                                <option value="3" selected="@(filter.Level == 3)">Advanced</option>
+                            </select>
+                        </div>
+
+                        <!-- Skill -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Skill</label>
+                            <select name="skillId" class="form-select">
+                                <option value="">All Skills</option>
+                                @foreach (var skill in skills.Take(20))
+                                {
+                                    <option value="@skill.Id"
+                                            selected="@(filter.SkillId == skill.Id)">
+                                        @skill.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Sort By -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Sort By</label>
+                            <select name="sortBy" class="form-select">
+                                <option value="" selected="@(string.IsNullOrEmpty(filter.SortBy))">Most Recent</option>
+                                <option value="title" selected="@(filter.SortBy == "title")">Title</option>
+                                <option value="price" selected="@(filter.SortBy == "price")">Price</option>
+                                <option value="rating" selected="@(filter.SortBy == "rating")">Rating</option>
+                                <option value="enrolled" selected="@(filter.SortBy == "enrolled")">Most Enrolled</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            <i class="bi bi-search"></i> Apply Filters
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Clear Filters
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses List -->
+        <div class="col-lg-9">
+            <!-- Results Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="mb-0">
+                        @Model.TotalCount Course@(Model.TotalCount != 1 ? "s" : "") Found
+                    </h4>
+                    @if (!string.IsNullOrEmpty(filter.SearchTerm))
+                    {
+                        <small class="text-muted">
+                            Results for "@filter.SearchTerm"
+                        </small>
+                    }
+                </div>
+            </div>
+
+            @if (Model.Items.Any())
+            {
+                <!-- Courses Grid -->
+                <div class="row g-4">
+                    @foreach (var course in Model.Items)
+                    {
+                        <div class="col-md-6 col-xl-4">
+                            <div class="card h-100 shadow-sm border-0 course-card">
+                                <!-- Course Image -->
+                                @if (!string.IsNullOrEmpty(course.ThumbnailPath))
+                                {
+                                    <img src="~/@course.ThumbnailPath" class="card-img-top"
+                                         alt="@course.Title" style="height: 200px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center"
+                                         style="height: 200px;">
+                                        <i class="bi bi-book text-white" style="font-size: 4rem;"></i>
+                                    </div>
+                                }
+
+                                <div class="card-body d-flex flex-column">
+                                    <!-- Category & Level Badge -->
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="badge bg-primary">@course.Level</span>
+                                        @if (course.Price.HasValue && course.Price > 0)
+                                        {
+                                            <span class="fw-bold text-primary fs-5">$@course.Price.Value.ToString("N2")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success fs-6">FREE</span>
+                                        }
+                                    </div>
+
+                                    <!-- Title -->
+                                    <h5 class="card-title">
+                                        <a asp-action="Details" asp-route-id="@course.Id"
+                                           class="text-decoration-none text-dark stretched-link">
+                                            @course.Title
+                                        </a>
+                                    </h5>
+
+                                    <!-- Description -->
+                                    <p class="card-text text-muted small flex-grow-1">
+                                        @course.ShortDescription
+                                    </p>
+
+                                    <!-- Instructor -->
+                                    <div class="mb-2">
+                                        <small class="text-muted">
+                                            <i class="bi bi-person"></i> @course.InstructorName
+                                        </small>
+                                    </div>
+
+                                    <!-- Rating & Enrollment -->
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            @if (course.ReviewCount > 0)
+                                            {
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                                <span class="fw-bold">@course.AverageRating.ToString("N1")</span>
+                                                <small class="text-muted">(@course.ReviewCount)</small>
+                                            }
+                                            else
+                                            {
+                                                <small class="text-muted">No reviews yet</small>
+                                            }
+                                        </div>
+                                        <small class="text-muted">
+                                            <i class="bi bi-people-fill"></i> @course.EnrollmentCount
+                                        </small>
+                                    </div>
+
+                                    <!-- Skills -->
+                                    @if (course.SkillNames.Any())
+                                    {
+                                        <div class="mt-2">
+                                            @foreach (var skill in course.SkillNames.Take(3))
+                                            {
+                                                <span class="badge bg-light text-dark border me-1">@skill</span>
+                                            }
+                                            @if (course.SkillNames.Count > 3)
+                                            {
+                                                <span class="badge bg-light text-dark border">+@(course.SkillNames.Count - 3) more</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Pagination -->
+                @if (Model.TotalPages > 1)
+                {
+                    <nav class="mt-5" aria-label="Course pagination">
+                        <ul class="pagination justify-content-center">
+                            <!-- Previous -->
+                            <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-pageNumber="@(Model.PageNumber - 1)"
+                                   asp-route-searchTerm="@filter.SearchTerm"
+                                   asp-route-categoryId="@filter.CategoryId"
+                                   asp-route-level="@filter.Level"
+                                   asp-route-skillId="@filter.SkillId"
+                                   asp-route-sortBy="@filter.SortBy">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+
+                            <!-- Page Numbers -->
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                    <a class="page-link"
+                                       asp-action="Index"
+                                       asp-route-pageNumber="@i"
+                                       asp-route-searchTerm="@filter.SearchTerm"
+                                       asp-route-categoryId="@filter.CategoryId"
+                                       asp-route-level="@filter.Level"
+                                       asp-route-skillId="@filter.SkillId"
+                                       asp-route-sortBy="@filter.SortBy">
+                                        @i
+                                    </a>
+                                </li>
+                            }
+
+                            <!-- Next -->
+                            <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-pageNumber="@(Model.PageNumber + 1)"
+                                   asp-route-searchTerm="@filter.SearchTerm"
+                                   asp-route-categoryId="@filter.CategoryId"
+                                   asp-route-level="@filter.Level"
+                                   asp-route-skillId="@filter.SkillId"
+                                   asp-route-sortBy="@filter.SortBy">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            }
+            else
+            {
+                <!-- No Results -->
+                <div class="text-center py-5">
+                    <i class="bi bi-search text-muted" style="font-size: 5rem;"></i>
+                    <h3 class="mt-3">No Courses Found</h3>
+                    <p class="text-muted">Try adjusting your filters or search term</p>
+                    <a asp-action="Index" class="btn btn-primary">
+                        <i class="bi bi-arrow-clockwise"></i> Reset Filters
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .course-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+            .course-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            }
+
+        .sticky-top {
+            position: sticky;
+        }
+    </style>
+}

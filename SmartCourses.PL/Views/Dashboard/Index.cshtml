@@ -1,0 +1,131 @@
+﻿@using SmartCourses.BLL.Models.DTOs.Response_ResultDTOs
+@model DashboardStatsDto
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid py-4">
+    <h1 class="mb-4"><i class="bi bi-speedometer2"></i> Admin Dashboard</h1>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-uppercase">Total Users</h6>
+                            <h2 class="mb-0">@Model.TotalUsers</h2>
+                        </div>
+                        <i class="bi bi-people-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-uppercase">Total Courses</h6>
+                            <h2 class="mb-0">@Model.TotalCourses</h2>
+                        </div>
+                        <i class="bi bi-book-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-uppercase">Enrollments</h6>
+                            <h2 class="mb-0">@Model.TotalEnrollments</h2>
+                        </div>
+                        <i class="bi bi-mortarboard-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-uppercase">Categories</h6>
+                            <h2 class="mb-0">@Model.TotalCategories</h2>
+                        </div>
+                        <i class="bi bi-folder-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent Courses -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Courses</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentCourses.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var course in Model.RecentCourses)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>@course.Title</strong>
+                                        <span class="badge bg-@(course.IsPublished ? "success" : "warning")">
+                                            @(course.IsPublished ? "Published" : "Draft")
+                                        </span>
+                                    </div>
+                                    <small class="text-muted">@course.InstructorName</small>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Rated Courses -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-star-fill text-warning"></i> Top Rated Courses</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.TopRatedCourses.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var course in Model.TopRatedCourses)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>@course.Title</strong>
+                                        <span>
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                            @course.AverageRating.ToString("N1")
+                                        </span>
+                                    </div>
+                                    <small class="text-muted">@course.EnrollmentCount students</small>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

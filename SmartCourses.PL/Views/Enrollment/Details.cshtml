@@ -1,0 +1,146 @@
+﻿@model EnrollmentDetailsDto
+
+@{
+    ViewData["Title"] = Model.CourseTitle;
+    Layout = "_Layout";
+}
+
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Video Player Section -->
+        <div class="col-lg-8 bg-dark">
+            <div class="p-4">
+                <div class="ratio ratio-16x9 bg-black mb-3">
+                    <div class="d-flex align-items-center justify-content-center text-white">
+                        <div class="text-center">
+                            <i class="bi bi-play-circle" style="font-size: 5rem;"></i>
+                            <p class="mt-3">Video Player Area</p>
+                            <small class="text-muted">Lesson content will appear here</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-white">
+                    <h3>@Model.CourseTitle</h3>
+                    <div class="d-flex gap-3 text-muted">
+                        <span><i class="bi bi-person"></i> @Model.UserName</span>
+                        <span>
+                            <i class="bi bi-graph-up"></i> 
+                            @Model.ProgressPercent.ToString("N0")% Complete
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar with Course Content -->
+        <div class="col-lg-4 bg-light" style="max-height: 100vh; overflow-y: auto;">
+            <div class="p-4">
+                <h5 class="mb-3">
+                    <i class="bi bi-list-ul"></i> Course Content
+                </h5>
+
+                <!-- Overall Progress -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Your Progress</span>
+                            <strong>@Model.CompletedLessons / @Model.TotalLessons</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" 
+                                 style="width: @Model.ProgressPercent%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course Sections -->
+                <div class="accordion" id="courseSections">
+                    @if (Model.Course?.Sections != null)
+                    {
+                        @foreach (var sec in Model.Course.Sections.OrderBy(s => s.Order))
+                        {
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#section-@sec.Id">
+                                        <strong>@sec.Title</strong>
+                                    </button>
+                                </h2>
+                                <div id="section-@sec.Id" class="accordion-collapse collapse show">
+                                    <div class="accordion-body p-0">
+                                        <div class="list-group list-group-flush">
+                                            @foreach (var lesson in sec.Lessons.OrderBy(l => l.Order))
+                                            {
+                                                var progress = Model.LessonProgresses.FirstOrDefault(lp => lp.LessonId == lesson.Id);
+                                                var isCompleted = progress?.IsCompleted ?? false;
+                                                
+                                                <a href="#" class="list-group-item list-group-item-action">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="d-flex align-items-center">
+                                                            @if (isCompleted)
+                                                            {
+                                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i class="bi bi-play-circle me-2"></i>
+                                                            }
+                                                            <span>@lesson.Title</span>
+                                                        </div>
+                                                        <small class="text-muted">@lesson.DurationInMinutes min</small>
+                                                    </div>
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-4 d-grid gap-2">
+                    @if (!Model.IsCompleted)
+                    {
+                        <form asp-action="MarkComplete" method="post">
+                            <input type="hidden" name="enrollmentId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-check-circle"></i> Mark Course as Complete
+                            </button>
+                        </form>
+                    }
+                    <a asp-controller="Course" asp-action="Details" asp-route-id="@Model.CourseId" 
+                       class="btn btn-outline-secondary">
+                        <i class="bi bi-info-circle"></i> Course Info
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Handle lesson progress updates
+        function markLessonComplete(enrollmentId, lessonId) {
+            fetch('/Enrollment/MarkLessonComplete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                body: JSON.stringify({ enrollmentId, lessonId, isCompleted: true })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+    </script>
+}
+
+

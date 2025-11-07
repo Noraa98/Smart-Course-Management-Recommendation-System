@@ -1,4 +1,4 @@
-namespace SmartCourses.PL.Models
+namespace SmartCourses.PL.ViewModels
 {
     public class ErrorViewModel
     {

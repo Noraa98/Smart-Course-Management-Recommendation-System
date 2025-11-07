@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SmartCourses.BLL.Models.DTOs.CourseDTOs;
 using SmartCourses.BLL.Services.Contracts;
-using SmartCourses.PL.Models;
+using SmartCourses.PL.ViewModels;
 using System.Diagnostics;
 
 namespace SmartCourses.PL.Controllers
