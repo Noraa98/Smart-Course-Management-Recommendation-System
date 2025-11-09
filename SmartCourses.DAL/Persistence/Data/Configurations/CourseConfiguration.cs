@@ -32,7 +32,7 @@ namespace SmartCourses.DAL.Persistence.Data.Configurations
                 .HasColumnType("decimal(18,2)");
 
             builder.Property(c => c.InstructorId)
-                .HasColumnType("varchar(450)") 
+                .HasColumnType("nvarchar(450)") 
                 .IsRequired();
 
             builder.HasOne(c => c.Category)
@@ -43,6 +43,7 @@ namespace SmartCourses.DAL.Persistence.Data.Configurations
             builder.HasOne(c => c.Instructor)
                 .WithMany(u => u.CoursesInstructed)
                 .HasForeignKey(c => c.InstructorId)
+                 .HasPrincipalKey(u => u.Id)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasIndex(c => c.Title);

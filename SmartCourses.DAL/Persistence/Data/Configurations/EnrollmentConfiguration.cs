@@ -19,7 +19,7 @@ namespace SmartCourses.DAL.Persistence.Data.Configurations
             builder.Property(e => e.Id).UseIdentityColumn(1, 1);
 
             builder.Property(e => e.UserId)
-                .HasColumnType("varchar(450)")
+                .HasColumnType("nvarchar(450)")
                 .IsRequired();
 
             builder.Property(e => e.ProgressPercent)

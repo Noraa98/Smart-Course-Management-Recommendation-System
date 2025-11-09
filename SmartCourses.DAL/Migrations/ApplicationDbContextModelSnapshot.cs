@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartCourses.DAL.Persistence.Data;
 
 #nullable disable
 
-namespace SmartCourses.DAL.Persistence.Data.Migrations
+namespace SmartCourses.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251105090556_InitialCreate")]
-    partial class InitialCreate
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,7 +232,7 @@ namespace SmartCourses.DAL.Persistence.Data.Migrations
 
                     b.Property<string>("InstructorId")
                         .IsRequired()
-                        .HasColumnType("varchar(450)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -325,7 +322,7 @@ namespace SmartCourses.DAL.Persistence.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("varchar(450)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -583,7 +580,7 @@ namespace SmartCourses.DAL.Persistence.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("varchar(450)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -669,7 +666,7 @@ namespace SmartCourses.DAL.Persistence.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("varchar(450)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 

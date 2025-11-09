@@ -3,49 +3,38 @@
     "Name": "Programming",
     "Description": "Courses about programming languages and software development.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
+
 
   },
   {
     "Name": "Data Science",
     "Description": "Courses about data analysis, machine learning, and AI.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "Web Development",
     "Description": "Front-end and back-end web development technologies.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "Mobile Development",
     "Description": "Android and iOS app development courses.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "UI/UX Design",
     "Description": "User interface and experience design best practices.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "Cyber Security",
     "Description": "Learn ethical hacking, network security, and data protection.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   }
 ]

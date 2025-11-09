@@ -10,9 +10,7 @@
     "CategoryId": 1,
     "InstructorId": 1,
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Title": "Modern Web Development with ASP.NET Core",
@@ -25,9 +23,7 @@
     "CategoryId": 3,
     "InstructorId": 1,
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Title": "Machine Learning with Python",
@@ -40,9 +36,7 @@
     "CategoryId": 2,
     "InstructorId": 2,
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Title": "Java Fundamentals and Spring Boot",
@@ -55,9 +49,7 @@
     "CategoryId": 1,
     "InstructorId": 2,
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Title": "Front-End Development with Angular",
@@ -70,9 +62,7 @@
     "CategoryId": 3,
     "InstructorId": 1,
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Title": "Data Analysis with Excel & Power BI",
@@ -85,9 +75,7 @@
     "CategoryId": 2,
     "InstructorId": 2,
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Title": "UI/UX Design Essentials",
@@ -100,9 +88,7 @@
     "CategoryId": 4,
     "InstructorId": 1,
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Title": "Cybersecurity Fundamentals",
@@ -115,9 +101,7 @@
     "CategoryId": 5,
     "InstructorId": 2,
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Title": "Advanced SQL & Database Optimization",
@@ -130,9 +114,7 @@
     "CategoryId": 5,
     "InstructorId": 2,
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Title": "Mobile App Development with Flutter",
@@ -145,8 +127,6 @@
     "CategoryId": 6,
     "InstructorId": 1,
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   }
 ]

@@ -19,7 +19,7 @@ namespace SmartCourses.DAL.Persistence.Data.Configurations
             builder.Property(n => n.Id).UseIdentityColumn(1, 1);
 
             builder.Property(n => n.UserId)
-                .HasColumnType("varchar(450)")
+                .HasColumnType("nvarchar(450)")
                 .IsRequired();
 
             builder.Property(n => n.Message)

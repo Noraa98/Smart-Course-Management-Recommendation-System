@@ -6,6 +6,7 @@ using SmartCourses.DAL.Entities.Identity;
 using SmartCourses.DAL.Persistence;
 using SmartCourses.DAL.Persistence.Data;
 using SmartCourses.DAL.Persistence.Data.DbInitializer;
+using System.Text.Json.Serialization;
 
 namespace SmartCourses.PL
 {
@@ -28,7 +29,13 @@ namespace SmartCourses.PL
 
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews()
+                    .AddJsonOptions(options =>
+                    {
+                        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+
+                        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    });
 
 
             // Register DAL Services

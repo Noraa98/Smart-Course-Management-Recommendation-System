@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SmartCourses.DAL.Persistence.Data.Migrations
+namespace SmartCourses.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class FixUserColumnTypes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -131,7 +131,7 @@ namespace SmartCourses.DAL.Persistence.Data.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     DurationInHours = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
-                    InstructorId = table.Column<string>(type: "varchar(450)", nullable: false),
+                    InstructorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(50)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDate()"),
                     LastModifiedBy = table.Column<string>(type: "varchar(50)", nullable: false),
@@ -164,7 +164,7 @@ namespace SmartCourses.DAL.Persistence.Data.Migrations
                     Message = table.Column<string>(type: "varchar(500)", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
                     Link = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    UserId = table.Column<string>(type: "varchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(50)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDate()"),
                     LastModifiedBy = table.Column<string>(type: "varchar(50)", nullable: false),
@@ -327,7 +327,7 @@ namespace SmartCourses.DAL.Persistence.Data.Migrations
                     ProgressPercent = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
                     CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    UserId = table.Column<string>(type: "varchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CourseId = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(50)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDate()"),
@@ -360,7 +360,7 @@ namespace SmartCourses.DAL.Persistence.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    UserId = table.Column<string>(type: "varchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CourseId = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(50)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDate()"),

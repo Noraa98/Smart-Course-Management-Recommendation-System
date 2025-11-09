@@ -1,116 +1,87 @@
 [
-  // Programming Skills
   {
     "Name": "C++",
     "Description": "Object-oriented programming with C++.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "Java",
     "Description": "Building scalable backend systems with Java.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "C#",
     "Description": "Developing modern apps using .NET.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "Python",
     "Description": "Scripting and data analysis with Python.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "SQL",
     "Description": "Database management and querying using SQL.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "HTML",
     "Description": "Structuring web pages using HTML5.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "CSS",
     "Description": "Designing web layouts and styles using CSS3.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "JavaScript",
     "Description": "Creating interactive web apps with JavaScript.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "Angular",
     "Description": "Building modern SPAs with Angular framework.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "React",
     "Description": "Developing fast user interfaces with ReactJS.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "Machine Learning",
     "Description": "Implementing ML models with Python.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "Cybersecurity",
     "Description": "Protecting systems from digital attacks.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
-    "Name": "UI/UX Design",
+    "Name": "UIUX Design",
     "Description": "Designing user-friendly interfaces and experiences.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   },
   {
     "Name": "Mobile Development",
     "Description": "Creating mobile apps for Android and iOS.",
     "CreatedBy": "System",
-    "CreatedOn": "DateTime.UtcNow",
-    "LastModifiedBy": "System",
-    "LastModifiedOn": "DateTime.UtcNow"
+    "LastModifiedBy": "System"
   }
 
 ]

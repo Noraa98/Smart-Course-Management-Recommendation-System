@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SmartCourses.DAL.Common.Enums;
+using SmartCourses.DAL.Common.JsonConverters;
 using SmartCourses.DAL.Contracts;
 using SmartCourses.DAL.Entities;
 using SmartCourses.DAL.Entities.Identity;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace SmartCourses.DAL.Persistence.Data.DbInitializer
 {
@@ -96,6 +98,11 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                 var categories = JsonSerializer.Deserialize<List<Category>>(data, options);
                 if (categories?.Count > 0)
                 {
+                    foreach (var category in categories)
+                    {
+                        category.CreatedOn = DateTime.UtcNow;
+                        category.LastModifiedOn = DateTime.UtcNow;
+                    }
                     _context.Categories.AddRange(categories);
                     _context.SaveChanges();
                 }
@@ -111,6 +118,11 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                 var skills = JsonSerializer.Deserialize<List<Skill>>(data, options);
                 if (skills?.Count > 0)
                 {
+                    foreach (var skill in skills)
+                    {
+                        skill.CreatedOn = DateTime.UtcNow;
+                        skill.LastModifiedOn = DateTime.UtcNow;
+                    }
                     _context.Skills.AddRange(skills);
                     _context.SaveChanges();
                 }
@@ -123,14 +135,54 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
             {
                 var path = Path.Combine(AppContext.BaseDirectory, "Persistence", "Data", "Seeds", "courses.json");
                 var data = File.ReadAllText(path);
+
+                if (!options.Converters.OfType<JsonStringEnumConverter>().Any())
+                    options.Converters.Add(new JsonStringEnumConverter());
+
+                if (!options.Converters.OfType<NumberToStringConverter>().Any())
+                    options.Converters.Add(new NumberToStringConverter());
+
                 var courses = JsonSerializer.Deserialize<List<Course>>(data, options);
+
                 if (courses?.Count > 0)
                 {
-                    _context.Courses.AddRange(courses);
-                    _context.SaveChanges();
+                    foreach (var course in courses)
+                    {
+                        //  InstructorId
+                        var instructorExists = _userManager.Users.Any(u => u.Id == course.InstructorId);
+                        if (!instructorExists)
+                        {
+                            Console.WriteLine($"Error: InstructorId '{course.InstructorId}' does not exist for course '{course.Title}'");
+                            continue; 
+                        }
+
+                        //  CategoryId
+                        var categoryExists = _context.Categories.Any(c => c.Id == course.CategoryId);
+                        if (!categoryExists)
+                        {
+                            Console.WriteLine($"Error: CategoryId '{course.CategoryId}' does not exist for course '{course.Title}'");
+                            continue;
+                        }
+
+                        course.CreatedOn = DateTime.UtcNow;
+                        course.LastModifiedOn = DateTime.UtcNow;
+
+                        _context.Courses.Add(course);
+                    }
+
+                    try
+                    {
+                        _context.SaveChanges();
+                        Console.WriteLine("Courses seeded successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error saving courses: " + ex.Message);
+                    }
                 }
             }
         }
+
 
         // helper class for JSON user structure
         private class JsonUser

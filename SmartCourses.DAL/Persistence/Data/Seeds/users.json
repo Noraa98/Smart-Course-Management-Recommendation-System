@@ -5,8 +5,7 @@
     "FirstName": "Admin",
     "LastName": "User",
     "Role": "Admin",
-    "EmailConfirmed": "true",
-    "CreatedAt": "DateTime.UtcNow"
+    "EmailConfirmed": "true"
   },
   {
     "UserName": "linda.smith@smartcourses.com",
@@ -15,8 +14,7 @@
     "LastName": "Smith",
     "Role": "Instructor",
     "Bio": "Experienced software developer and instructor specializing in web development and design.",
-    "EmailConfirmed": "true",
-    "CreatedAt": "DateTime.UtcNow"
+    "EmailConfirmed": "true"
   },
   {
     "UserName": "mohamed.ali@smartcourses.com",
@@ -25,8 +23,7 @@
     "LastName": "Ali",
     "Role": "Instructor",
     "Bio": "Passionate about teaching programming and data science with real-world applications.",
-    "EmailConfirmed": "true",
-    "CreatedAt": "DateTime.UtcNow"
+    "EmailConfirmed": "true"
   },
   {
     "UserName": "student1@smartcourses.com",
@@ -35,8 +32,7 @@
     "LastName": "Hassan",
     "Role": "Student",
     "Bio": "Aspiring developer eager to learn new technologies and improve coding skills.",
-    "EmailConfirmed": "true",
-    "CreatedAt": "DateTime.UtcNow"
+    "EmailConfirmed": "true"
 
   },
   {
@@ -46,7 +42,6 @@
     "LastName": "Youssef",
     "Role": "Student",
     "Bio": "Enthusiastic about data science and machine learning, looking to build a career in tech.",
-    "EmailConfirmed": "true",
-    "CreatedAt": "DateTime.UtcNow"
+    "EmailConfirmed": "true"
   }
 ]
