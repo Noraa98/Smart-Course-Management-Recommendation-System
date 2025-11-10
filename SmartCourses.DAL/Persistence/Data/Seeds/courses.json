@@ -7,7 +7,7 @@
     "IsPublished": true,
     "Price": 49.99,
     "DurationInHours": 40,
-    "CategoryId": 1,
+    "CategoryName": "Programming",
     "InstructorId": 1,
     "CreatedBy": "System",
     "LastModifiedBy": "System"
@@ -20,7 +20,7 @@
     "IsPublished": true,
     "Price": 59.99,
     "DurationInHours": 50,
-    "CategoryId": 3,
+    "CategoryName": "Web Development",
     "InstructorId": 1,
     "CreatedBy": "System",
     "LastModifiedBy": "System"
@@ -33,7 +33,7 @@
     "IsPublished": true,
     "Price": 79.99,
     "DurationInHours": 60,
-    "CategoryId": 2,
+    "CategoryName": "Data Science",
     "InstructorId": 2,
     "CreatedBy": "System",
     "LastModifiedBy": "System"
@@ -46,7 +46,7 @@
     "IsPublished": true,
     "Price": 54.99,
     "DurationInHours": 45,
-    "CategoryId": 1,
+    "CategoryName": "Programming",
     "InstructorId": 2,
     "CreatedBy": "System",
     "LastModifiedBy": "System"
@@ -59,7 +59,7 @@
     "IsPublished": true,
     "Price": 55.99,
     "DurationInHours": 48,
-    "CategoryId": 3,
+    "CategoryName": "Web Development",
     "InstructorId": 1,
     "CreatedBy": "System",
     "LastModifiedBy": "System"
@@ -72,7 +72,7 @@
     "IsPublished": true,
     "Price": 39.99,
     "DurationInHours": 35,
-    "CategoryId": 2,
+    "CategoryName": "Data Science",
     "InstructorId": 2,
     "CreatedBy": "System",
     "LastModifiedBy": "System"
@@ -85,7 +85,7 @@
     "IsPublished": true,
     "Price": 44.99,
     "DurationInHours": 30,
-    "CategoryId": 4,
+    "CategoryName": "UI/UX Design",
     "InstructorId": 1,
     "CreatedBy": "System",
     "LastModifiedBy": "System"
@@ -98,7 +98,7 @@
     "IsPublished": true,
     "Price": 64.99,
     "DurationInHours": 55,
-    "CategoryId": 5,
+    "CategoryName": "Cyber Security",
     "InstructorId": 2,
     "CreatedBy": "System",
     "LastModifiedBy": "System"
@@ -111,7 +111,7 @@
     "IsPublished": true,
     "Price": 69.99,
     "DurationInHours": 45,
-    "CategoryId": 5,
+    "CategoryName": "Cyber Security",
     "InstructorId": 2,
     "CreatedBy": "System",
     "LastModifiedBy": "System"
@@ -124,7 +124,7 @@
     "IsPublished": true,
     "Price": 74.99,
     "DurationInHours": 60,
-    "CategoryId": 6,
+    "CategoryName": "Mobile Development",
     "InstructorId": 1,
     "CreatedBy": "System",
     "LastModifiedBy": "System"

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SmartCourses.DAL.Persistence.Common
+﻿namespace SmartCourses.DAL.Persistence.Common
 {
     public class QueryParams
     {

@@ -23,6 +23,10 @@ namespace SmartCourses.DAL.Persistence.Data.Configurations.RelationshipsTablesCo
             builder.Property(us => us.ProficiencyLevel)
                 .IsRequired()
                 .HasDefaultValue(1);
+
+            // Global Query Filter to exclude soft-deleted Skills
+            builder.HasQueryFilter(us => !EF.Property<bool>(us.Skill, "IsDeleted"));
+
         }
     }
 }

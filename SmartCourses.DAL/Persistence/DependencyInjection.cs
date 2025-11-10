@@ -6,7 +6,6 @@ using SmartCourses.DAL.Contracts.Repositories;
 using SmartCourses.DAL.Persistence.Data;
 using SmartCourses.DAL.Persistence.Data.DbInitializer;
 using SmartCourses.DAL.Persistence.Repositories;
-using SmartCourses.DAL.Persistence.UnitOfWork;
 
 namespace SmartCourses.DAL.Persistence
 {

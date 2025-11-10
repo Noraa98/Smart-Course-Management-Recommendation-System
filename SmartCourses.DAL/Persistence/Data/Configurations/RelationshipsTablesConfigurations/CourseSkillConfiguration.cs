@@ -19,6 +19,11 @@ namespace SmartCourses.DAL.Persistence.Data.Configurations.RelationshipsTablesCo
                 .WithMany(s => s.CourseSkills)
                 .HasForeignKey(cs => cs.SkillId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Global Query Filter to exclude soft-deleted related entities
+            builder.HasQueryFilter(cs =>
+                !EF.Property<bool>(cs.Course, "IsDeleted") &&
+                !EF.Property<bool>(cs.Skill, "IsDeleted"));
         }
 
     }

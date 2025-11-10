@@ -1,10 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 using SmartCourses.DAL.Contracts;
 using SmartCourses.DAL.Contracts.Repositories;
 using SmartCourses.DAL.Persistence.Data;
 using SmartCourses.DAL.Persistence.Repositories;
-using System.Collections;
 
 namespace SmartCourses.DAL.Persistence.UnitOfWork
 {

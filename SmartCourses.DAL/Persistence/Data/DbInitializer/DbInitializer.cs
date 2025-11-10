@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SmartCourses.DAL.Common.Enums;
-using SmartCourses.DAL.Common.JsonConverters;
 using SmartCourses.DAL.Contracts;
 using SmartCourses.DAL.Entities;
 using SmartCourses.DAL.Entities.Identity;
@@ -36,7 +35,10 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
 
         public void Seed()
         {
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var options = new JsonSerializerOptions {
+                PropertyNameCaseInsensitive = true,
+               Converters = { new JsonStringEnumConverter() }
+            };
 
             SeedRoles(options);
             SeedUsers(options);
@@ -85,6 +87,7 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                         _userManager.CreateAsync(user, "Password@123").Wait();
                         _userManager.AddToRoleAsync(user, u.Role).Wait();
                     }
+                    Console.WriteLine($" Successfully seeded {users.Count} users.");
                 }
             }
         }
@@ -106,6 +109,7 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                     _context.Categories.AddRange(categories);
                     _context.SaveChanges();
                 }
+                Console.WriteLine($" Successfully seeded {categories.Count} categories.");
             }
         }
 
@@ -126,6 +130,8 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                     _context.Skills.AddRange(skills);
                     _context.SaveChanges();
                 }
+                Console.WriteLine($" Successfully seeded {skills.Count} skills.");
+
             }
         }
 
@@ -134,38 +140,61 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
             if (!_context.Courses.Any())
             {
                 var path = Path.Combine(AppContext.BaseDirectory, "Persistence", "Data", "Seeds", "courses.json");
-                var data = File.ReadAllText(path);
 
-                if (!options.Converters.OfType<JsonStringEnumConverter>().Any())
-                    options.Converters.Add(new JsonStringEnumConverter());
-
-                if (!options.Converters.OfType<NumberToStringConverter>().Any())
-                    options.Converters.Add(new NumberToStringConverter());
-
-                var courses = JsonSerializer.Deserialize<List<Course>>(data, options);
-
-                if (courses?.Count > 0)
+                if (!File.Exists(path))
                 {
-                    foreach (var course in courses)
-                    {
-                        //  InstructorId
-                        var instructorExists = _userManager.Users.Any(u => u.Id == course.InstructorId);
-                        if (!instructorExists)
-                        {
-                            Console.WriteLine($"Error: InstructorId '{course.InstructorId}' does not exist for course '{course.Title}'");
-                            continue; 
-                        }
+                    Console.WriteLine($"❌ Error: courses.json file not found at {path}");
+                    return;
+                }
 
-                        //  CategoryId
-                        var categoryExists = _context.Categories.Any(c => c.Id == course.CategoryId);
-                        if (!categoryExists)
+                var data = File.ReadAllText(path);
+                var coursesData = JsonSerializer.Deserialize<List<CourseJsonModel>>(data, options);
+
+                if (coursesData?.Count > 0)
+                {
+                    var instructors = _userManager.Users
+                        .Where(u => u.Email != null &&
+                               (u.Email.Contains("linda.smith") || u.Email.Contains("mohamed.ali")))
+                        .ToList();
+
+                    if (instructors.Count < 2)
+                    {
+                        Console.WriteLine($"❌ Error: Not enough instructors found. Expected 2, found {instructors.Count}");
+                        return;
+                    }
+
+                    var lindaId = instructors.First(u => u.Email!.Contains("linda.smith")).Id;
+                    var mohamedId = instructors.First(u => u.Email!.Contains("mohamed.ali")).Id;
+
+                    var categories = _context.Categories.ToList();
+                    var categoryMap = categories.ToDictionary(c => c.Name, c => c.Id);
+
+                    foreach (var courseData in coursesData)
+                    {
+                        var actualInstructorId = courseData.InstructorId == 1 ? lindaId : mohamedId;
+
+                        if (!categoryMap.TryGetValue(courseData.CategoryName, out int categoryId))
                         {
-                            Console.WriteLine($"Error: CategoryId '{course.CategoryId}' does not exist for course '{course.Title}'");
+                            Console.WriteLine($"⚠️ Warning: Category '{courseData.CategoryName}' not found for course '{courseData.Title}'. Skipping.");
                             continue;
                         }
 
-                        course.CreatedOn = DateTime.UtcNow;
-                        course.LastModifiedOn = DateTime.UtcNow;
+                        var course = new Course
+                        {
+                            Title = courseData.Title,
+                            ShortDescription = courseData.ShortDescription,
+                            Description = courseData.Description,
+                            Level = courseData.Level,
+                            IsPublished = courseData.IsPublished,
+                            Price = courseData.Price,
+                            DurationInHours = courseData.DurationInHours,
+                            CategoryId = categoryId,
+                            InstructorId = actualInstructorId,
+                            CreatedBy = courseData.CreatedBy,
+                            LastModifiedBy = courseData.LastModifiedBy,
+                            CreatedOn = DateTime.UtcNow,
+                            LastModifiedOn = DateTime.UtcNow
+                        };
 
                         _context.Courses.Add(course);
                     }
@@ -173,14 +202,40 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                     try
                     {
                         _context.SaveChanges();
-                        Console.WriteLine("Courses seeded successfully.");
+                        Console.WriteLine($"✅ Successfully seeded {coursesData.Count} courses.");
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Error saving courses: " + ex.Message);
+                        Console.WriteLine($"❌ Error saving courses: {ex.Message}");
+                        if (ex.InnerException != null)
+                            Console.WriteLine($"   Inner Exception: {ex.InnerException.Message}");
                     }
                 }
+                else
+                {
+                    Console.WriteLine("⚠️ Warning: No course data found in courses.json");
+                }
             }
+            else
+            {
+                Console.WriteLine("ℹ️ Courses already exist. Skipping seed.");
+            }
+        }
+
+        // Helper class for deserializing JSON (add this inside DbInitializer class)
+        private class CourseJsonModel
+        {
+            public string Title { get; set; } = null!;
+            public string ShortDescription { get; set; } = null!;
+            public string Description { get; set; } = null!;
+            public CourseLevel Level { get; set; }
+            public bool IsPublished { get; set; }
+            public decimal? Price { get; set; }
+            public int DurationInHours { get; set; }
+            public string CategoryName { get; set; } = null!;  // Changed from CategoryId
+            public int InstructorId { get; set; }  // Temporary, will be mapped to GUID
+            public string CreatedBy { get; set; } = "System";
+            public string LastModifiedBy { get; set; } = "System";
         }
 
 
