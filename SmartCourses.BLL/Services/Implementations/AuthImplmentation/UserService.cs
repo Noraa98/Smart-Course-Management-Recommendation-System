@@ -175,6 +175,7 @@ namespace SmartCourses.BLL.Services.Implementations.AuthImplmentation
             }
         }
 
+        
         public async Task<ServiceResult> AddUserSkillsAsync(string userId, List<int> skillIds)
         {
             try
@@ -185,11 +186,11 @@ namespace SmartCourses.BLL.Services.Implementations.AuthImplmentation
                     return ServiceResult.Failure("User not found");
                 }
 
-                // Get existing skills
-                var existingSkills = await _unitOfWork.Skills.GetUserSkillsAsync(userId);
-                var existingSkillIds = existingSkills.Select(s => s.Id).ToList();
+                // Get existing skills using DbContext directly
+                var existingSkills = await _unitOfWork.Repository<UserSkill, (string, int)>()
+                    .FindAsync(us => us.UserId == userId);
 
-                // Add new skills only
+                var existingSkillIds = existingSkills.Select(s => s.SkillId).ToList();
                 var newSkillIds = skillIds.Except(existingSkillIds).ToList();
 
                 foreach (var skillId in newSkillIds)
@@ -205,12 +206,12 @@ namespace SmartCourses.BLL.Services.Implementations.AuthImplmentation
                             AddedAt = DateTime.UtcNow
                         };
 
+                     
                         await _unitOfWork.Repository<UserSkill, (string, int)>().AddAsync(userSkill);
                     }
                 }
 
                 await _unitOfWork.SaveChangesAsync();
-
                 return ServiceResult.Success("Skills added successfully");
             }
             catch (Exception ex)

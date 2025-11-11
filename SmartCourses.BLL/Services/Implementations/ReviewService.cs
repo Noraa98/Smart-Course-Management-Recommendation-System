@@ -75,6 +75,11 @@ namespace SmartCourses.BLL.Services.Implementations
         {
             try
             {
+                // ✅ Validate rating
+                if (reviewDto.Rating < 1 || reviewDto.Rating > 5)
+                {
+                    return ServiceResult<ReviewDto>.Failure("Rating must be between 1 and 5");
+                }
                 // Check if course exists
                 var course = await _unitOfWork.Courses.GetByIdAsync(reviewDto.CourseId);
                 if (course == null)

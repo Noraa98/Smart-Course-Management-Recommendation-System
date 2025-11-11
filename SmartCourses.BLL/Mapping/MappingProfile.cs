@@ -1,17 +1,12 @@
 ﻿using AutoMapper;
+using SmartCourses.BLL.Models.DTOs;
 using SmartCourses.BLL.Models.DTOs.CourseDTOs;
 using SmartCourses.BLL.Models.DTOs.Enrollment_ReviewDTOs;
 using SmartCourses.BLL.Models.DTOs.User_AuthenticationDTOs;
-using SmartCourses.BLL.Models.DTOs;
+using SmartCourses.DAL.Common.Enums;
+using SmartCourses.DAL.Entities;
 using SmartCourses.DAL.Entities.Identity;
 using SmartCourses.DAL.Entities.RelationshipsTables;
-using SmartCourses.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SmartCourses.DAL.Common.Enums;
 
 namespace SmartCourses.BLL.Mapping
 {

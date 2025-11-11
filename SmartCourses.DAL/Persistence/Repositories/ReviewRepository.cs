@@ -45,6 +45,29 @@ namespace SmartCourses.DAL.Persistence.Repositories
         {
             return await _dbSet.AnyAsync(r => r.UserId == userId && r.CourseId == courseId);
         }
+        public async Task<IEnumerable<Review>> GetReviewsByCourseIdsAsync(List<int> courseIds)
+        {
+            return await _dbSet
+                .Where(r => courseIds.Contains(r.CourseId))
+                .Include(r => r.User)
+                .Include(r => r.Course)
+                .OrderByDescending(r => r.CreatedOn)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetReviewCountByCourseIdsAsync(List<int> courseIds)
+        {
+            return await _dbSet.CountAsync(r => courseIds.Contains(r.CourseId));
+        }
+
+        public async Task<double> GetAverageRatingByCourseIdsAsync(List<int> courseIds)
+        {
+            var reviews = await _dbSet
+                .Where(r => courseIds.Contains(r.CourseId))
+                .ToListAsync();
+
+            return reviews.Any() ? reviews.Average(r => r.Rating) : 0;
+        }
     }
 }
 

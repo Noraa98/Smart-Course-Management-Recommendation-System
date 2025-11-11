@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using SmartCourses.BLL.Models.DTOs;
 using SmartCourses.BLL.Models.DTOs.CourseDTOs;
 using SmartCourses.BLL.Models.DTOs.Enrollment_ReviewDTOs;
 using SmartCourses.BLL.Models.DTOs.Response_ResultDTOs;
@@ -40,23 +41,30 @@ namespace SmartCourses.BLL.Services.Implementations
                 // Get role-specific counts
                 var students = await _userManager.GetUsersInRoleAsync("Student");
                 var instructors = await _userManager.GetUsersInRoleAsync("Instructor");
+                var admins = await _userManager.GetUsersInRoleAsync("Admin");
                 stats.StudentsCount = students.Count;
                 stats.InstructorsCount = instructors.Count;
+                stats.AdminsCount = admins.Count;
 
-                // Get recent courses
+                // Get course counts by publish status
+                var allCourses = await _unitOfWork.Courses.GetAllAsync();
+                stats.PublishedCoursesCount = allCourses.Count(c => c.IsPublished);
+                stats.UnpublishedCoursesCount = allCourses.Count(c => !c.IsPublished);
+
+                //  repository method  GetAllAsync
                 var recentCourses = await _unitOfWork.Courses.GetRecentCoursesAsync(5);
                 stats.RecentCourses = _mapper.Map<List<CourseListDto>>(recentCourses);
 
-                // Get top rated courses
                 var topRatedCourses = await _unitOfWork.Courses.GetTopRatedCoursesAsync(5);
                 stats.TopRatedCourses = _mapper.Map<List<CourseListDto>>(topRatedCourses);
 
-                // Get recent enrollments (you'll need to add this to repository)
-                var allEnrollments = await _unitOfWork.Enrollments.GetAllAsync();
-                var recentEnrollments = allEnrollments
-                    .OrderByDescending(e => e.EnrolledAt)
-                    .Take(10);
+               
+                var recentEnrollments = await _unitOfWork.Enrollments.GetRecentEnrollmentsAsync(10);
                 stats.RecentEnrollments = _mapper.Map<List<EnrollmentDto>>(recentEnrollments);
+
+                // Calculate total revenue (if needed)
+                var paidCourses = allCourses.Where(c => c.Price.HasValue && c.Price > 0);
+                stats.TotalRevenue = paidCourses.Sum(c => c.Price ?? 0) * stats.TotalEnrollments; // تقدير
 
                 return ServiceResult<DashboardStatsDto>.Success(stats);
             }
@@ -76,28 +84,46 @@ namespace SmartCourses.BLL.Services.Implementations
                 var courses = await _unitOfWork.Courses.GetCoursesByInstructorAsync(instructorId);
                 dashboard.TotalCourses = courses.Count();
                 dashboard.PublishedCourses = courses.Count(c => c.IsPublished);
+                dashboard.UnpublishedCourses = courses.Count(c => !c.IsPublished);
 
-                // Get total enrollments across all instructor courses
                 var courseIds = courses.Select(c => c.Id).ToList();
-                var enrollments = await _unitOfWork.Enrollments.GetAllAsync();
-                dashboard.TotalEnrollments = enrollments.Count(e => courseIds.Contains(e.CourseId));
 
-                // Get reviews
-                var reviews = await _unitOfWork.Reviews.GetAllAsync();
-                var instructorReviews = reviews.Where(r => courseIds.Contains(r.CourseId)).ToList();
-                dashboard.TotalReviews = instructorReviews.Count;
-                dashboard.AverageRating = instructorReviews.Any()
-                    ? instructorReviews.Average(r => r.Rating)
-                    : 0;
+                
+                dashboard.TotalEnrollments = await _unitOfWork.Enrollments
+                    .GetEnrollmentCountByCourseIdsAsync(courseIds);
+
+                // Get enrollments for detailed stats
+                var enrollments = await _unitOfWork.Enrollments
+                    .FindAsync(e => courseIds.Contains(e.CourseId));
+                dashboard.ActiveEnrollments = enrollments.Count(e => !e.IsCompleted);
+                dashboard.CompletedEnrollments = enrollments.Count(e => e.IsCompleted);
+
+                
+                dashboard.TotalReviews = await _unitOfWork.Reviews
+                    .GetReviewCountByCourseIdsAsync(courseIds);
+
+                dashboard.AverageRating = await _unitOfWork.Reviews
+                    .GetAverageRatingByCourseIdsAsync(courseIds);
+
+                // Calculate revenue
+                var paidCourses = courses.Where(c => c.Price.HasValue && c.Price > 0);
+                dashboard.TotalRevenue = paidCourses.Sum(c => c.Price ?? 0) * dashboard.TotalEnrollments;
 
                 // Map courses
                 dashboard.MyCourses = _mapper.Map<List<CourseListDto>>(courses);
 
                 // Get recent reviews
-                var recentReviews = instructorReviews
-                    .OrderByDescending(r => r.CreatedOn)
+                var instructorReviews = await _unitOfWork.Reviews
+                    .GetReviewsByCourseIdsAsync(courseIds);
+
+                dashboard.RecentReviews = _mapper.Map<List<ReviewDto>>(
+                    instructorReviews.Take(10));
+
+                // Get recent enrollments
+                var recentEnrollments = enrollments
+                    .OrderByDescending(e => e.EnrolledAt)
                     .Take(10);
-                dashboard.RecentReviews = _mapper.Map<List<ReviewDto>>(recentReviews);
+                dashboard.RecentEnrollments = _mapper.Map<List<EnrollmentDto>>(recentEnrollments);
 
                 return ServiceResult<InstructorDashboardDto>.Success(dashboard);
             }
@@ -126,14 +152,20 @@ namespace SmartCourses.BLL.Services.Implementations
                 }
 
                 // Recent enrollments
-                var recentEnrollments = enrollments
-                    .OrderByDescending(e => e.EnrolledAt)
-                    .Take(5);
-                dashboard.RecentEnrollments = _mapper.Map<List<EnrollmentDto>>(recentEnrollments);
+                dashboard.RecentEnrollments = _mapper.Map<List<EnrollmentDto>>(
+                    enrollments.OrderByDescending(e => e.EnrolledAt).Take(5));
 
                 // In progress courses
-                var inProgressEnrollments = await _unitOfWork.Enrollments.GetInProgressEnrollmentsAsync(studentId);
-                dashboard.InProgressCourses = _mapper.Map<List<EnrollmentDto>>(inProgressEnrollments.Take(5));
+                var inProgressEnrollments = await _unitOfWork.Enrollments
+                    .GetInProgressEnrollmentsAsync(studentId);
+                dashboard.InProgressCourses = _mapper.Map<List<EnrollmentDto>>(
+                    inProgressEnrollments.Take(5));
+
+                // Completed courses
+                var completedEnrollments = await _unitOfWork.Enrollments
+                    .GetCompletedEnrollmentsAsync(studentId);
+                dashboard.CompletedCourses = _mapper.Map<List<CourseListDto>>(
+                    completedEnrollments.Take(5).Select(e => e.Course));
 
                 // Get recommended courses (simple implementation)
                 var publishedCourses = await _unitOfWork.Courses.GetPublishedCoursesAsync();
@@ -143,6 +175,11 @@ namespace SmartCourses.BLL.Services.Implementations
                     .OrderByDescending(c => c.Enrollments.Count)
                     .Take(6);
                 dashboard.RecommendedCourses = _mapper.Map<List<CourseListDto>>(recommendedCourses);
+
+                // Optional: Calculate watched hours
+                dashboard.TotalWatchedHours = enrollments
+                    .Where(e => e.Course?.DurationInHours != null)
+                    .Sum(e => (int)(e.Course!.DurationInHours * (e.ProgressPercent / 100)));
 
                 return ServiceResult<StudentDashboardDto>.Success(dashboard);
             }

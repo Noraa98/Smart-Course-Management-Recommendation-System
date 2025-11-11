@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SmartCourses.BLL.Models.DTOs.CourseDTOs
+﻿namespace SmartCourses.BLL.Models.DTOs.CourseDTOs
 {
     public class CourseListDto
     {

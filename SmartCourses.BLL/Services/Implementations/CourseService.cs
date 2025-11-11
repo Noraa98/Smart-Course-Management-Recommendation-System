@@ -1,34 +1,30 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SmartCourses.BLL.Models.DTOs.CourseDTOs;
 using SmartCourses.BLL.Models.DTOs.Response_ResultDTOs;
 using SmartCourses.BLL.Services.Contracts;
 using SmartCourses.DAL.Common.Enums;
 using SmartCourses.DAL.Contracts;
-using SmartCourses.DAL.Entities.RelationshipsTables;
 using SmartCourses.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SmartCourses.DAL.Entities.RelationshipsTables;
+using SmartCourses.DAL.Persistence.Data;
 
 namespace SmartCourses.BLL.Services.Implementations
 {
-     public class CourseService : ICourseService
+    public class CourseService : ICourseService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
 
-        public CourseService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CourseService(IUnitOfWork unitOfWork, IMapper mapper ,ApplicationDbContext context)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _context = context;
         }
 
-        // ==========================================
         // Query Methods
-        // ==========================================
-
         public async Task<ServiceResult<CourseDto>> GetByIdAsync(int id)
         {
             try
@@ -79,68 +75,69 @@ namespace SmartCourses.BLL.Services.Implementations
         {
             try
             {
-                // Build predicate based on filters
-                var courses = await _unitOfWork.Courses.GetPublishedCoursesAsync();
+                // ✅ استخدم IQueryable للفلترة في قاعدة البيانات
+                IQueryable<Course> query = _context.Courses
+                    .Include(c => c.Category)
+                    .Include(c => c.Instructor)
+                    .Include(c => c.CourseSkills)
+                        .ThenInclude(cs => cs.Skill)
+                    .Include(c => c.Enrollments)
+                    .Include(c => c.Reviews)
+                    .Where(c => c.IsPublished && !c.IsDeleted);
 
                 // Apply filters
                 if (!string.IsNullOrEmpty(filter.SearchTerm))
                 {
-                    courses = courses.Where(c =>
-                        c.Title.Contains(filter.SearchTerm, StringComparison.OrdinalIgnoreCase) ||
-                        c.Description.Contains(filter.SearchTerm, StringComparison.OrdinalIgnoreCase));
+                    query = query.Where(c =>
+                        c.Title.Contains(filter.SearchTerm) ||
+                        c.Description.Contains(filter.SearchTerm));
                 }
 
                 if (filter.CategoryId.HasValue)
                 {
-                    courses = courses.Where(c => c.CategoryId == filter.CategoryId.Value);
+                    query = query.Where(c => c.CategoryId == filter.CategoryId.Value);
                 }
 
                 if (filter.Level.HasValue)
                 {
-                    courses = courses.Where(c => (int)c.Level == filter.Level.Value);
+                    query = query.Where(c => (int)c.Level == filter.Level.Value);
                 }
 
                 if (filter.SkillId.HasValue)
                 {
-                    courses = courses.Where(c =>
-                        c.CourseSkills.Any(cs => cs.SkillId == filter.SkillId.Value));
+                    query = query.Where(c => c.CourseSkills.Any(cs => cs.SkillId == filter.SkillId.Value));
                 }
 
                 if (filter.MinPrice.HasValue)
                 {
-                    courses = courses.Where(c => c.Price >= filter.MinPrice.Value);
+                    query = query.Where(c => c.Price >= filter.MinPrice.Value);
                 }
 
                 if (filter.MaxPrice.HasValue)
                 {
-                    courses = courses.Where(c => c.Price <= filter.MaxPrice.Value);
+                    query = query.Where(c => c.Price <= filter.MaxPrice.Value);
                 }
 
                 // Apply sorting
-                courses = filter.SortBy?.ToLower() switch
+                query = filter.SortBy?.ToLower() switch
                 {
                     "title" => filter.SortOrder == "desc"
-                        ? courses.OrderByDescending(c => c.Title)
-                        : courses.OrderBy(c => c.Title),
+                        ? query.OrderByDescending(c => c.Title)
+                        : query.OrderBy(c => c.Title),
                     "price" => filter.SortOrder == "desc"
-                        ? courses.OrderByDescending(c => c.Price)
-                        : courses.OrderBy(c => c.Price),
-                    "rating" => filter.SortOrder == "desc"
-                        ? courses.OrderByDescending(c => c.Reviews.Any() ? c.Reviews.Average(r => r.Rating) : 0)
-                        : courses.OrderBy(c => c.Reviews.Any() ? c.Reviews.Average(r => r.Rating) : 0),
-                    "enrolled" => filter.SortOrder == "desc"
-                        ? courses.OrderByDescending(c => c.Enrollments.Count)
-                        : courses.OrderBy(c => c.Enrollments.Count),
-                    _ => courses.OrderByDescending(c => c.CreatedOn)
+                        ? query.OrderByDescending(c => c.Price)
+                        : query.OrderBy(c => c.Price),
+                    _ => query.OrderByDescending(c => c.CreatedOn)
                 };
 
-                var totalCount = courses.Count();
+                // Get total count BEFORE pagination
+                var totalCount = await query.CountAsync();
 
                 // Apply pagination
-                var pagedCourses = courses
+                var pagedCourses = await query
                     .Skip((filter.PageNumber - 1) * filter.PageSize)
                     .Take(filter.PageSize)
-                    .ToList();
+                    .ToListAsync(); // ✅ فقط هنا نجلب البيانات
 
                 var courseDtos = _mapper.Map<List<CourseListDto>>(pagedCourses);
 
@@ -157,7 +154,6 @@ namespace SmartCourses.BLL.Services.Implementations
                 return ServiceResult<PaginatedResultDto<CourseListDto>>.Failure($"An error occurred: {ex.Message}");
             }
         }
-
         public async Task<ServiceResult<List<CourseListDto>>> GetPublishedCoursesAsync()
         {
             try
@@ -218,10 +214,7 @@ namespace SmartCourses.BLL.Services.Implementations
             }
         }
 
-        // ==========================================
         // Command Methods - CRUD
-        // ==========================================
-
         public async Task<ServiceResult<CourseDto>> CreateAsync(CourseCreateDto createDto, string instructorId)
         {
             try
@@ -430,10 +423,8 @@ namespace SmartCourses.BLL.Services.Implementations
             }
         }
 
-        // ==========================================
+    
         // Private Helper Methods
-        // ==========================================
-
         private async Task AddCourseSkillsAsync(int courseId, List<int> skillIds)
         {
             var courseSkillRepo = _unitOfWork.Repository<CourseSkill, (int, int)>();
@@ -623,10 +614,8 @@ namespace SmartCourses.BLL.Services.Implementations
             }
         }
 
-        // ==========================================
+     
         // Statistics Methods
-        // ==========================================
-
         public async Task<ServiceResult<List<CourseListDto>>> GetTopRatedCoursesAsync(int count = 10)
         {
             try

@@ -25,5 +25,8 @@ namespace SmartCourses.DAL.Contracts.Repositories
 
        
         Task<int> GetCourseEnrollmentCountAsync(int courseId);
+
+        Task<IEnumerable<Enrollment>> GetRecentEnrollmentsAsync(int count = 10);
+        Task<int> GetEnrollmentCountByCourseIdsAsync(List<int> courseIds);
     }
 }

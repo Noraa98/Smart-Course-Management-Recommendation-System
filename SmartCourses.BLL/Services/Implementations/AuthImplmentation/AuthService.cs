@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using SmartCourses.BLL.Models.DTOs.Response_ResultDTOs;
 using SmartCourses.BLL.Models.DTOs.User_AuthenticationDTOs;
@@ -11,18 +12,22 @@ namespace SmartCourses.BLL.Services.Implementations.AuthImplmentation
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
 
         public AuthService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+             IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
         }
 
+        
         public async Task<ServiceResult<UserDto>> RegisterAsync(RegisterDto registerDto, string role = "Student")
         {
             try
@@ -137,7 +142,7 @@ namespace SmartCourses.BLL.Services.Implementations.AuthImplmentation
         {
             try
             {
-                var user = await _userManager.GetUserAsync(_signInManager.Context.User);
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext?.User);
 
                 if (user == null)
                 {

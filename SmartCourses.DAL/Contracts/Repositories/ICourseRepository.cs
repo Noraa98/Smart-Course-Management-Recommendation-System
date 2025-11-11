@@ -34,5 +34,7 @@ namespace SmartCourses.DAL.Contracts.Repositories
 
        
         Task<IEnumerable<Course>> GetRecentCoursesAsync(int count = 10);
+
+
     }
 }

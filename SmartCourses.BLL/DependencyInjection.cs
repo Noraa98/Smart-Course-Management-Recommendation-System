@@ -1,17 +1,10 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
-using SmartCourses.BLL.Mapping;
+﻿using Microsoft.Extensions.DependencyInjection;
 using SmartCourses.BLL.Services.Contracts;
 using SmartCourses.BLL.Services.Implementations;
 using SmartCourses.BLL.Services.Implementations.AuthImplmentation;
 using SmartCourses.BLL.Services.Interfaces;
 using SmartCourses.BLL.Services.Interfaces.Auth;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SmartCourses.BLL
 {

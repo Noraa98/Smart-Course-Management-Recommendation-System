@@ -231,12 +231,10 @@ namespace SmartCourses.BLL.Services.Implementations
             }
         }
 
-        // ==========================================
         // Progress Management
-        // ==========================================
-
         public async Task<ServiceResult> UpdateLessonProgressAsync(LessonProgressUpdateDto progressDto, string userId)
         {
+            await _unitOfWork.BeginTransactionAsync();
             try
             {
                 // Verify enrollment belongs to user
@@ -297,12 +295,16 @@ namespace SmartCourses.BLL.Services.Implementations
                 }
 
                 _unitOfWork.Enrollments.Update(enrollment);
+
+
                 await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitTransactionAsync();
 
                 return ServiceResult.Success("Progress updated successfully");
             }
             catch (Exception ex)
             {
+                await _unitOfWork.RollbackTransactionAsync();
                 return ServiceResult.Failure($"An error occurred: {ex.Message}");
             }
         }

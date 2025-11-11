@@ -90,6 +90,22 @@ namespace SmartCourses.DAL.Persistence.Repositories
             {
                 return await _dbSet.CountAsync(e => e.CourseId == courseId);
             }
+        public async Task<IEnumerable<Enrollment>> GetRecentEnrollmentsAsync(int count = 10)
+        {
+            return await _dbSet
+                .Include(e => e.User)
+                .Include(e => e.Course)
+                    .ThenInclude(c => c.Category)
+                .OrderByDescending(e => e.EnrolledAt)
+                .Take(count)
+                .ToListAsync();
         }
+
+        public async Task<int> GetEnrollmentCountByCourseIdsAsync(List<int> courseIds)
+        {
+            return await _dbSet.CountAsync(e => courseIds.Contains(e.CourseId));
+        }
+    }
+
     }
 
