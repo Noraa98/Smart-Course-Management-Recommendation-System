@@ -1,0 +1,45 @@
+@model IEnumerable<SmartCourses.BLL.Models.DTOs.Enrollment_ReviewDTOs.ReviewDto>
+@{
+    ViewData["Title"] = "My Reviews";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">My Reviews</h2>
+        <a class="btn btn-outline-secondary" asp-controller="Enrollment" asp-action="MyCourses">My Courses</a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <div class="list-group">
+        @foreach (var review in Model ?? Enumerable.Empty<SmartCourses.BLL.Models.DTOs.Enrollment_ReviewDTOs.ReviewDto>())
+        {
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="fw-semibold">Course: @review.CourseTitle</div>
+                        <div>Rating: @review.Rating / 5</div>
+                        <div class="text-muted">@review.Comment</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-sm btn-outline-primary" asp-controller="Review" asp-action="Edit" asp-route-id="@review.Id">Edit</a>
+                        <form asp-controller="Review" asp-action="Delete" asp-route-id="@review.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this review?')">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+

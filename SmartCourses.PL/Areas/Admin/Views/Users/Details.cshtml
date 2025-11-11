@@ -1,0 +1,45 @@
+@using SmartCourses.BLL.Models.DTOs.User_AuthenticationDTOs
+@model UserDto
+@{
+    ViewData["Title"] = "User Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">User Details</h2>
+        <a class="btn btn-outline-secondary" asp-area="Admin" asp-controller="Users" asp-action="Index">Back to List</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Name</dt>
+                <dd class="col-sm-9">@(Model.FirstName + " " + Model.LastName)</dd>
+                <dt class="col-sm-3">Email</dt>
+                <dd class="col-sm-9">@Model.Email</dd>
+                <dt class="col-sm-3">Roles</dt>
+                <dd class="col-sm-9">@string.Join(", ", Model.Roles ?? new List<string>())</dd>
+                
+            </dl>
+
+            <div class="d-flex gap-2">
+                <a class="btn btn-secondary" asp-area="Admin" asp-controller="Users" asp-action="ManageRoles" asp-route-id="@Model.Id">Manage Roles</a>
+                <form asp-area="Admin" asp-controller="Users" asp-action="LockUser" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-warning" onclick="return confirm('Lock this user?')">Lock</button>
+                </form>
+                <form asp-area="Admin" asp-controller="Users" asp-action="UnlockUser" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-success" onclick="return confirm('Unlock this user?')">Unlock</button>
+                </form>
+                <form asp-area="Admin" asp-controller="Users" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="ms-auto">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this user?')">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+

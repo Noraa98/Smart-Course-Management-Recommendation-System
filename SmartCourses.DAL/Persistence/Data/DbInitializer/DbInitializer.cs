@@ -175,7 +175,7 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
 
                         if (!categoryMap.TryGetValue(courseData.CategoryName, out int categoryId))
                         {
-                            Console.WriteLine($"⚠️ Warning: Category '{courseData.CategoryName}' not found for course '{courseData.Title}'. Skipping.");
+                            Console.WriteLine($"Warning: Category '{courseData.CategoryName}' not found for course '{courseData.Title}'. Skipping.");
                             continue;
                         }
 

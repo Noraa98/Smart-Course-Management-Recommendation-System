@@ -1,0 +1,42 @@
+@model SmartCourses.BLL.Models.DTOs.CourseDTOs.LessonCreateDto
+@{
+    ViewData["Title"] = "Add Lesson";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var sectionId = (int)(ViewBag.SectionId ?? 0);
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Add Lesson</h2>
+        <a class="btn btn-outline-secondary" asp-area="Instructor" asp-controller="Courses" asp-action="Index">Back</a>
+    </div>
+
+    <form asp-area="Instructor" asp-controller="Courses" asp-action="AddLesson" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        @Html.AntiForgeryToken()
+        <input asp-for="SectionId" type="hidden" value="@sectionId" />
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="DurationInMinutes" class="form-label"></label>
+            <input asp-for="DurationInMinutes" class="form-control" type="number" min="1" />
+            <span asp-validation-for="DurationInMinutes" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Video File (optional)</label>
+            <input name="videoFile" type="file" class="form-control" accept=".mp4,.avi,.mov" />
+        </div>
+        <button type="submit" class="btn btn-primary">Add Lesson</button>
+    </form>
+
+    <partial name="~/Views/Shared/_ValidationScriptsPartial.cshtml" />
+</div>
+
+

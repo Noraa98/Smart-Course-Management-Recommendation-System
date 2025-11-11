@@ -1,0 +1,49 @@
+@model SmartCourses.BLL.Models.DTOs.Response_ResultDTOs.StudentDashboardDto
+@{
+    ViewData["Title"] = "Student Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Student Dashboard</h2>
+        <a class="btn btn-outline-secondary" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card text-bg-primary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Enrolled Courses</h5>
+                    <p class="display-6 mb-0">@Model.EnrolledCoursesCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-bg-success h-100">
+                <div class="card-body">
+                    <h5 class="card-title">In Progress</h5>
+                    <p class="display-6 mb-0">@Model.InProgressCoursesCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-bg-info h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Completed</h5>
+                    <p class="display-6 mb-0">@Model.CompletedCoursesCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-bg-warning h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Certificates</h5>
+                    <p class="display-6 mb-0">@Model.TotalCertificates</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

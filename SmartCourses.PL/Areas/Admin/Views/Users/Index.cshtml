@@ -1,0 +1,57 @@
+@using SmartCourses.BLL.Models.DTOs.Response_ResultDTOs
+@using SmartCourses.BLL.Models.DTOs.User_AuthenticationDTOs
+@model PaginatedResultDto<UserDto>
+@{
+    ViewData["Title"] = "Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Users</h2>
+        <a class="btn btn-outline-secondary" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+    </div>
+
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-auto">
+            <select name="role" class="form-select">
+                <option value="">All Roles</option>
+                <option value="Admin" selected="@(ViewBag.CurrentRole as string == "Admin")">Admin</option>
+                <option value="Instructor" selected="@(ViewBag.CurrentRole as string == "Instructor")">Instructor</option>
+                <option value="Student" selected="@(ViewBag.CurrentRole as string == "Student")">Student</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Roles</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var user in Model.Items ?? new List<UserDto>())
+            {
+                <tr>
+                    <td>@(user.FirstName + " " + user.LastName)</td>
+                    <td>@user.Email</td>
+                    <td>@string.Join(", ", user.Roles ?? new List<string>())</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-info" asp-area="Admin" asp-controller="Users" asp-action="Details" asp-route-id="@user.Id">Details</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-area="Admin" asp-controller="Users" asp-action="ManageRoles" asp-route-id="@user.Id">Manage Roles</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

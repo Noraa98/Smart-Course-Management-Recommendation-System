@@ -1,0 +1,61 @@
+@model SmartCourses.BLL.Models.DTOs.CourseDTOs.CourseDto
+@{
+    ViewData["Title"] = "Manage Content";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Manage Content - @Model.Title</h2>
+        <a class="btn btn-outline-secondary" asp-area="Instructor" asp-controller="Courses" asp-action="Index">Back to My Courses</a>
+    </div>
+
+    <a class="btn btn-primary mb-3" asp-area="Instructor" asp-controller="Courses" asp-action="AddSection" asp-route-courseId="@Model.Id">Add Section</a>
+
+    @foreach (var sec in Model.Sections ?? new List<SmartCourses.BLL.Models.DTOs.CourseDTOs.SectionDto>())
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">@sec.Title</h5>
+                    <div>
+                        <form asp-area="Instructor" asp-controller="Courses" asp-action="DeleteSection" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="sectionId" value="@sec.Id" />
+                            <input type="hidden" name="courseId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this section?')">Delete Section</button>
+                        </form>
+                        <a class="btn btn-sm btn-outline-primary" asp-area="Instructor" asp-controller="Courses" asp-action="AddLesson" asp-route-sectionId="@sec.Id">Add Lesson</a>
+                    </div>
+                </div>
+                <hr />
+                @if (sec.Lessons != null && sec.Lessons.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var lesson in sec.Lessons)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-semibold">@lesson.Title</div>
+                                    <small class="text-muted">@lesson.DurationInMinutes min</small>
+                                </div>
+                                <form asp-area="Instructor" asp-controller="Courses" asp-action="DeleteLesson" method="post" class="mb-0">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="lessonId" value="@lesson.Id" />
+                                    <input type="hidden" name="courseId" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this lesson?')">Delete</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="text-muted">No lessons yet.</div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+

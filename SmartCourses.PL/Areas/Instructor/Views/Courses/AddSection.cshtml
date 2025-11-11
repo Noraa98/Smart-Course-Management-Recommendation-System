@@ -1,0 +1,28 @@
+@model SmartCourses.BLL.Models.DTOs.CourseDTOs.SectionCreateDto
+@{
+    ViewData["Title"] = "Add Section";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var course = ViewBag.Course as SmartCourses.BLL.Models.DTOs.CourseDTOs.CourseDto;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Add Section - @course?.Title</h2>
+        <a class="btn btn-outline-secondary" asp-area="Instructor" asp-controller="Courses" asp-action="ManageContent" asp-route-id="@Model.CourseId">Back</a>
+    </div>
+
+    <form asp-area="Instructor" asp-controller="Courses" asp-action="AddSection" method="post" class="needs-validation" novalidate>
+        @Html.AntiForgeryToken()
+        <input asp-for="CourseId" type="hidden" />
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Section</button>
+    </form>
+
+    <partial name="~/Views/Shared/_ValidationScriptsPartial.cshtml" />
+</div>
+
+

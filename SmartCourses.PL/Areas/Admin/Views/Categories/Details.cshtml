@@ -1,0 +1,32 @@
+@model SmartCourses.BLL.Models.DTOs.CategoryDto
+@{
+    ViewData["Title"] = "Category Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">@Model.Name</h2>
+        <div>
+            <a class="btn btn-outline-secondary" asp-area="Admin" asp-controller="Categories" asp-action="Index">Back to List</a>
+            <a class="btn btn-primary" asp-area="Admin" asp-controller="Categories" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Name</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+                <dt class="col-sm-3">Icon</dt>
+                <dd class="col-sm-9">@Model.IconPath</dd>
+                <dt class="col-sm-3">Courses</dt>
+                <dd class="col-sm-9">@Model.CourseCount</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+
