@@ -134,9 +134,16 @@ namespace SmartCourses.PL
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            // Authentication must come before Authorization
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
+            // Map Areas route before default to ensure area URLs resolve
+            app.MapControllerRoute(
+                name: "areas",
+                pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}")
+                .WithStaticAssets();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
