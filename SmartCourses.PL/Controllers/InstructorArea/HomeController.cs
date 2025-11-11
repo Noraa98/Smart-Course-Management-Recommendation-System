@@ -8,6 +8,12 @@ namespace SmartCourses.PL.Controllers.InstructorArea
 	public class HomeController : Controller
 	{
 		[HttpGet]
+		public IActionResult Index()
+		{
+			return RedirectToAction("Index", "Dashboard", new { area = "Instructor" });
+		}
+
+		[HttpGet]
 		public IActionResult About()
 		{
 			return View("~/Views/Home/About.cshtml");

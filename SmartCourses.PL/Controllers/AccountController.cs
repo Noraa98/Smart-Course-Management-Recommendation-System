@@ -123,14 +123,22 @@ namespace SmartCourses.PL.Controllers
 
        
         // Logout
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await _authService.LogoutAsync();
             TempData["Success"] = "You have been logged out successfully.";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home", new { area = "" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> LogoutPost()
+        {
+            await _authService.LogoutAsync();
+            TempData["Success"] = "You have been logged out successfully.";
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
 
         // Profile

@@ -48,6 +48,13 @@ namespace SmartCourses.PL.Controllers.InstructorArea
             return View(result.Data);
         }
 
+		// Accept singular alias: /Instructor/Course -> redirect to /Instructor/Courses
+		[HttpGet("/Instructor/Course")]
+		public IActionResult CourseAlias()
+		{
+			return RedirectToAction(nameof(Index));
+		}
+
    
         // Manage Course Content (Sections & Lessons)
 
