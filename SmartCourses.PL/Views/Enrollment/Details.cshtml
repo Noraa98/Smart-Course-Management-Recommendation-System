@@ -10,13 +10,11 @@
         <!-- Video Player Section -->
         <div class="col-lg-8 bg-dark">
             <div class="p-4">
-                <div class="ratio ratio-16x9 bg-black mb-3">
-                    <div class="d-flex align-items-center justify-content-center text-white">
-                        <div class="text-center">
-                            <i class="bi bi-play-circle" style="font-size: 5rem;"></i>
-                            <p class="mt-3">Video Player Area</p>
-                            <small class="text-muted">Lesson content will appear here</small>
-                        </div>
+                <div id="playerContainer" class="ratio ratio-16x9 bg-black mb-3 d-flex align-items-center justify-content-center text-white">
+                    <div class="text-center" id="playerPlaceholder">
+                        <i class="bi bi-play-circle" style="font-size: 5rem;"></i>
+                        <p class="mt-3">Video/Content Player</p>
+                        <small class="text-muted">Select a lesson from the right to start</small>
                     </div>
                 </div>
 
@@ -55,6 +53,10 @@
                 </div>
 
                 <!-- Course Sections -->
+                <form id="antiForgeryForm" method="post">
+                    @Html.AntiForgeryToken()
+                </form>
+
                 <div class="accordion" id="courseSections">
                     @if (Model.Course?.Sections != null)
                     {
@@ -75,7 +77,14 @@
                                                 var progress = Model.LessonProgresses.FirstOrDefault(lp => lp.LessonId == lesson.Id);
                                                 var isCompleted = progress?.IsCompleted ?? false;
                                                 
-                                                <a href="#" class="list-group-item list-group-item-action">
+                                                <a href="javascript:void(0)"
+                                                   class="list-group-item list-group-item-action"
+                                                   data-lesson-id="@lesson.Id"
+                                                   data-title="@lesson.Title"
+                                                   data-content-type="@lesson.ContentType"
+                                                   data-content-path="@lesson.ContentPath"
+                                                   data-external-url="@lesson.ExternalUrl"
+                                                   onclick="loadLesson(@Model.Id, this)">
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <div class="d-flex align-items-center">
                                                             @if (isCompleted)
@@ -123,22 +132,100 @@
 
 @section Scripts {
     <script>
-        // Handle lesson progress updates
+        function getCsrfToken() {
+            const form = document.getElementById('antiForgeryForm');
+            return form.querySelector('input[name="__RequestVerificationToken"]').value;
+        }
+
+        function setPlayerContent(html) {
+            const container = document.getElementById('playerContainer');
+            container.innerHTML = html;
+        }
+
+        let currentLessonId = null;
+
+        function buildVideoPlayer(src) {
+            return `<video id="lessonVideo" controls class="w-100 h-100">
+                        <source src="${src}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>`;
+        }
+
+        function buildPdfViewer(src) {
+            return `<iframe src="${src}" class="w-100 h-100" frameborder="0"></iframe>`;
+        }
+
+        function buildExternalEmbed(url) {
+            return `<iframe src="${url}" class="w-100 h-100" frameborder="0" allowfullscreen></iframe>`;
+        }
+
+        // contentType expected values (from DTO): Video, Article, PDF, Quiz
+        function loadLesson(enrollmentId, anchor) {
+            const title = anchor.getAttribute('data-title');
+            const type = (anchor.getAttribute('data-content-type') || '').toLowerCase();
+            const path = anchor.getAttribute('data-content-path') || '';
+            const external = anchor.getAttribute('data-external-url') || '';
+
+            let playerHtml = '';
+            if (type === 'video') {
+                const src = external || path;
+                if (src) {
+                    playerHtml = buildVideoPlayer(src);
+                }
+            } else if (type === 'pdf') {
+                const src = external || path;
+                if (src) {
+                    playerHtml = buildPdfViewer(src);
+                }
+            } else if (external) {
+                playerHtml = buildExternalEmbed(external);
+            } else {
+                playerHtml = `<div class="d-flex align-items-center justify-content-center text-white" style="min-height:300px">
+                                <div class="text-center">
+                                    <i class="bi bi-file-earmark-text" style="font-size:3rem;"></i>
+                                    <p class="mt-3 mb-0">${title}</p>
+                                    <small class="text-muted">No preview available</small>
+                                </div>
+                              </div>`;
+            }
+
+            setPlayerContent(playerHtml);
+            currentLessonId = parseInt(anchor.getAttribute('data-lesson-id'));
+
+            // Attach auto-complete on video end
+            const video = document.getElementById('lessonVideo');
+            if (video) {
+                video.addEventListener('ended', function() {
+                    if (currentLessonId) {
+                        markLessonComplete(enrollmentId, currentLessonId);
+                    }
+                });
+            }
+
+            // Mark lesson complete (optimistic) when user loads it
+            markLessonComplete(enrollmentId, currentLessonId);
+        }
+
         function markLessonComplete(enrollmentId, lessonId) {
             fetch('/Enrollment/MarkLessonComplete', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'RequestVerificationToken': getCsrfToken()
                 },
-                body: JSON.stringify({ enrollmentId, lessonId, isCompleted: true })
+                body: `enrollmentId=${encodeURIComponent(enrollmentId)}&lessonId=${encodeURIComponent(lessonId)}`
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                if (data.success) {
-                    location.reload();
+                if (data && data.success) {
+                    // Update overall progress bar without reload
+                    const progressBar = document.querySelector('.progress-bar');
+                    if (progressBar) {
+                        progressBar.style.width = (data.progress || 0) + '%';
+                    }
                 }
-            });
+            })
+            .catch(() => {});
         }
     </script>
 }

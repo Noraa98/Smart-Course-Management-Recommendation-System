@@ -203,6 +203,56 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                     {
                         _context.SaveChanges();
                         Console.WriteLine($"✅ Successfully seeded {coursesData.Count} courses.");
+
+                        // Seed realistic sections and lessons with local video paths if none exist
+                        if (!_context.Sections.Any() && !_context.Lessons.Any())
+                        {
+                            var courses = _context.Courses.ToList();
+                            foreach (var c in courses)
+                            {
+                                // Create two sections per course
+                                for (int s = 1; s <= 2; s++)
+                                {
+                                    var section = new Section
+                                    {
+                                        Title = s == 1 ? "Getting Started" : "Core Concepts",
+                                        Description = s == 1 ? "Introduction and setup" : "Deep dive into key topics",
+                                        Order = s,
+                                        CourseId = c.Id,
+                                        CreatedBy = "System",
+                                        LastModifiedBy = "System",
+                                        CreatedOn = DateTime.UtcNow,
+                                        LastModifiedOn = DateTime.UtcNow
+                                    };
+                                    _context.Sections.Add(section);
+                                    _context.SaveChanges();
+
+                                    // Create three lessons per section with local video paths
+                                    for (int l = 1; l <= 3; l++)
+                                    {
+                                        var minutes = 5 + (l * 3);
+                                        var lesson = new Lesson
+                                        {
+                                            Title = $"Lesson {s}.{l}",
+                                            Description = l == 1 ? "Overview and context" : (l == 2 ? "Hands-on example" : "Summary and next steps"),
+                                            ContentType = ContentType.Video,
+                                            ContentPath = $"/videos/course{c.Id}_s{s}_l{l}.mp4", // Assume placeholder MP4 files exist
+                                            DurationInMinutes = minutes,
+                                            Order = l,
+                                            IsFree = s == 1 && l == 1, // First lesson free
+                                            SectionId = section.Id,
+                                            CreatedBy = "System",
+                                            LastModifiedBy = "System",
+                                            CreatedOn = DateTime.UtcNow,
+                                            LastModifiedOn = DateTime.UtcNow
+                                        };
+                                        _context.Lessons.Add(lesson);
+                                    }
+                                }
+                            }
+                            _context.SaveChanges();
+                            Console.WriteLine("✅ Seeded Sections and video Lessons with /videos paths for each course.");
+                        }
                     }
                     catch (Exception ex)
                     {
