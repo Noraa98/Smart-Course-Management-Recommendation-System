@@ -88,7 +88,17 @@ namespace SmartCourses.DAL.Persistence.Data
             });
         }
 
-  
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            
+            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            
+            optionsBuilder.UseSqlServer(
+                options => options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+        }
+
         // SaveChangesAsync - Override for Audit Trail
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

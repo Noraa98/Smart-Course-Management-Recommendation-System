@@ -7,11 +7,11 @@ namespace SmartCourses.PL.Controllers.AdminArea
 	[Authorize(Roles = "Admin")]
 	public class CourseController : Controller
 	{
-		// Handle /Admin/Course by redirecting to Admin Dashboard (no Admin Course controller exists)
+		// Handle /Admin/Course by redirecting to CoursesController (plural)
 		[HttpGet]
 		public IActionResult Index()
 		{
-			return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+			return RedirectToAction("Index", "Courses", new { area = "Admin" });
 		}
 	}
 }

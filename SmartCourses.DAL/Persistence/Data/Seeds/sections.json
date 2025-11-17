@@ -1,0 +1,152 @@
+[
+  {
+    "CourseId": 1,
+    "Title": "Getting Started with C#",
+    "Description": "Introduction to C# programming language and development environment",
+    "Order": 1
+  },
+  {
+    "CourseId": 1,
+    "Title": "C# Fundamentals",
+    "Description": "Core concepts including variables, data types, and operators",
+    "Order": 2
+  },
+  {
+    "CourseId": 1,
+    "Title": "Object-Oriented Programming",
+    "Description": "Learn OOP principles: classes, objects, inheritance, polymorphism",
+    "Order": 3
+  },
+  {
+    "CourseId": 2,
+    "Title": "ASP.NET Core Basics",
+    "Description": "Introduction to ASP.NET Core framework and MVC pattern",
+    "Order": 1
+  },
+  {
+    "CourseId": 2,
+    "Title": "Working with Entity Framework Core",
+    "Description": "Database access using EF Core ORM",
+    "Order": 2
+  },
+  {
+    "CourseId": 2,
+    "Title": "Building RESTful APIs",
+    "Description": "Creating Web APIs with ASP.NET Core",
+    "Order": 3
+  },
+  {
+    "CourseId": 3,
+    "Title": "Python Basics for Data Science",
+    "Description": "Python fundamentals and data structures",
+    "Order": 1
+  },
+  {
+    "CourseId": 3,
+    "Title": "NumPy and Pandas",
+    "Description": "Working with numerical data and dataframes",
+    "Order": 2
+  },
+  {
+    "CourseId": 3,
+    "Title": "Data Visualization",
+    "Description": "Creating charts and graphs with Matplotlib",
+    "Order": 3
+  },
+  {
+    "CourseId": 4,
+    "Title": "Machine Learning Introduction",
+    "Description": "Overview of ML concepts and algorithms",
+    "Order": 1
+  },
+  {
+    "CourseId": 4,
+    "Title": "Supervised Learning",
+    "Description": "Regression and classification algorithms",
+    "Order": 2
+  },
+  {
+    "CourseId": 4,
+    "Title": "Neural Networks",
+    "Description": "Deep learning fundamentals",
+    "Order": 3
+  },
+  {
+    "CourseId": 5,
+    "Title": "Angular Fundamentals",
+    "Description": "Components, templates, and data binding",
+    "Order": 1
+  },
+  {
+    "CourseId": 5,
+    "Title": "Angular Routing",
+    "Description": "Navigation and route guards",
+    "Order": 2
+  },
+  {
+    "CourseId": 5,
+    "Title": "State Management",
+    "Description": "Managing application state with NgRx",
+    "Order": 3
+  },
+  {
+    "CourseId": 6,
+    "Title": "Data Analysis Basics",
+    "Description": "Introduction to Excel and data analysis",
+    "Order": 1
+  },
+  {
+    "CourseId": 6,
+    "Title": "Power BI Fundamentals",
+    "Description": "Creating reports and dashboards",
+    "Order": 2
+  },
+  {
+    "CourseId": 7,
+    "Title": "UI/UX Principles",
+    "Description": "Design thinking and user experience basics",
+    "Order": 1
+  },
+  {
+    "CourseId": 7,
+    "Title": "Figma Essentials",
+    "Description": "Designing interfaces with Figma",
+    "Order": 2
+  },
+  {
+    "CourseId": 8,
+    "Title": "Introduction to Cybersecurity",
+    "Description": "Security fundamentals and threat landscape",
+    "Order": 1
+  },
+  {
+    "CourseId": 8,
+    "Title": "Network Security",
+    "Description": "Protecting networks and systems",
+    "Order": 2
+  },
+  {
+    "CourseId": 9,
+    "Title": "SQL Fundamentals",
+    "Description": "Basic queries and database concepts",
+    "Order": 1
+  },
+  {
+    "CourseId": 9,
+    "Title": "Advanced SQL",
+    "Description": "Complex queries and optimization techniques",
+    "Order": 2
+  },
+  {
+    "CourseId": 10,
+    "Title": "Flutter Basics",
+    "Description": "Introduction to Flutter and Dart",
+    "Order": 1
+  },
+  {
+    "CourseId": 10,
+    "Title": "Building Flutter UIs",
+    "Description": "Widgets and layouts in Flutter",
+    "Order": 2
+  }
+]

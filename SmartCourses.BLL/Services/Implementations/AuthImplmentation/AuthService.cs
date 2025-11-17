@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using SmartCourses.BLL.Models.DTOs.Response_ResultDTOs;
@@ -129,7 +131,15 @@ namespace SmartCourses.BLL.Services.Implementations.AuthImplmentation
         {
             try
             {
+                // Sign out from SignInManager (handles cookie-based authentication)
                 await _signInManager.SignOutAsync();
+                
+                // Explicitly sign out from cookie authentication scheme to ensure complete logout
+                if (_httpContextAccessor.HttpContext != null)
+                {
+                    await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                }
+                
                 return ServiceResult.Success("Logout successful");
             }
             catch (Exception ex)

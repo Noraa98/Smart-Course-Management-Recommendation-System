@@ -1,129 +1,175 @@
-﻿@model EnrollmentDetailsDto
+﻿@model EnrollmentDetailsViewModel
 
 @{
-    ViewData["Title"] = Model.CourseTitle;
-    Layout = "_Layout";
+    ViewData["Title"] = Model.Course.Title;
+    var currentLesson = Model.CurrentLesson;
+    var videoId = GetYouTubeVideoId(currentLesson?.ExternalUrl);
 }
 
-<div class="container-fluid p-0">
-    <div class="row g-0">
+<div class="container-fluid">
+    <div class="row">
         <!-- Video Player Section -->
-        <div class="col-lg-8 bg-dark">
-            <div class="p-4">
-                <div id="playerContainer" class="ratio ratio-16x9 bg-black mb-3 d-flex align-items-center justify-content-center text-white">
-                    <div class="text-center" id="playerPlaceholder">
-                        <i class="bi bi-play-circle" style="font-size: 5rem;"></i>
-                        <p class="mt-3">Video/Content Player</p>
-                        <small class="text-muted">Select a lesson from the right to start</small>
+        <div class="col-lg-8">
+            <div class="video-container bg-dark" style="min-height: 500px;">
+                @if (!string.IsNullOrEmpty(videoId))
+                {
+                    <!-- YouTube Embed -->
+                    <iframe 
+                        id="videoPlayer"
+                        width="100%" 
+                        height="500" 
+                            src="https://www.youtube.com/embed/@videoId?enablejsapi=1&origin=@(Context.Request.Scheme)://@(Context.Request.Host)"
+                            title="@currentLesson.Title"
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                }
+                else
+                {
+                    <div class="d-flex align-items-center justify-content-center h-100">
+                        <div class="text-center text-white">
+                            <i class="fas fa-play-circle fa-5x mb-3"></i>
+                            <h4>Select a lesson from the right to start</h4>
+                        </div>
                     </div>
-                </div>
-
-                <div class="text-white">
-                    <h3>@Model.CourseTitle</h3>
-                    <div class="d-flex gap-3 text-muted">
-                        <span><i class="bi bi-person"></i> @Model.UserName</span>
-                        <span>
-                            <i class="bi bi-graph-up"></i> 
-                            @Model.ProgressPercent.ToString("N0")% Complete
-                        </span>
-                    </div>
-                </div>
+                }
             </div>
+
+            <!-- Course Title -->
+            <div class="mt-4">
+                <h2>@Model.Course.Title</h2>
+                
+                @if (currentLesson != null)
+                {
+                    <h4 class="text-muted">@currentLesson.Title</h4>
+                    <p>@currentLesson.Description</p>
+                }
+            </div>
+
+            <!-- Lesson Controls -->
+            @if (currentLesson != null)
+            {
+                <div class="d-flex justify-content-between mt-4">
+                    @if (Model.PreviousLessonId.HasValue)
+                    {
+                        <a href="@Url.Action("Details", new { id = Model.EnrollmentId, lessonId = Model.PreviousLessonId })" 
+                           class="btn btn-secondary">
+                            <i class="fas fa-chevron-left"></i> Previous Lesson
+                        </a>
+                    }
+                    else
+                    {
+                        <div></div>
+                    }
+
+                    <button id="markCompleteBtn" 
+                            class="btn btn-success"
+                            data-enrollment-id="@Model.EnrollmentId"
+                            data-lesson-id="@currentLesson.Id">
+                        <i class="fas fa-check"></i> Mark as Complete
+                    </button>
+
+                    @if (Model.NextLessonId.HasValue)
+                    {
+                        <a href="@Url.Action("Details", new { id = Model.EnrollmentId, lessonId = Model.NextLessonId })" 
+                           class="btn btn-primary">
+                            Next Lesson <i class="fas fa-chevron-right"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <div></div>
+                    }
+                </div>
+            }
         </div>
 
-        <!-- Sidebar with Course Content -->
-        <div class="col-lg-4 bg-light" style="max-height: 100vh; overflow-y: auto;">
-            <div class="p-4">
-                <h5 class="mb-3">
-                    <i class="bi bi-list-ul"></i> Course Content
-                </h5>
-
-                <!-- Overall Progress -->
-                <div class="card mb-3">
-                    <div class="card-body">
+        <!-- Course Content Sidebar -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Course Content</h5>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Progress Bar -->
+                    <div class="p-3 border-bottom">
                         <div class="d-flex justify-content-between mb-2">
                             <span>Your Progress</span>
-                            <strong>@Model.CompletedLessons / @Model.TotalLessons</strong>
+                            <span>@Model.CompletedLessons / @Model.TotalLessons</span>
                         </div>
-                        <div class="progress" style="height: 10px;">
+                        <div class="progress" style="height: 8px;">
                             <div class="progress-bar bg-success" 
-                                 style="width: @Model.ProgressPercent%"></div>
+                                 role="progressbar" 
+                                 style="width: @Model.ProgressPercent%"
+                                 aria-valuenow="@Model.ProgressPercent" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Course Sections -->
-                <form id="antiForgeryForm" method="post">
-                    @Html.AntiForgeryToken()
-                </form>
-
-                <div class="accordion" id="courseSections">
-                    @if (Model.Course?.Sections != null)
-                    {
+                    <!-- Sections and Lessons -->
+                    <div class="accordion" id="courseSections">
                         @foreach (var sec in Model.Course.Sections.OrderBy(s => s.Order))
                         {
-                            <div class="accordion-item">
+                            var sectionId = "section" + sec.Id;
+                            var isExpanded = sec.Lessons.Any(l => l.Id == currentLesson?.Id);
+
+                            <div class="accordion-item border-0">
                                 <h2 class="accordion-header">
-                                    <button class="accordion-button" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#section-@sec.Id">
+                                    <button class="accordion-button @(isExpanded ? "" : "collapsed")" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#@sectionId">
                                         <strong>@sec.Title</strong>
                                     </button>
                                 </h2>
-                                <div id="section-@sec.Id" class="accordion-collapse collapse show">
+                                <div id="@sectionId" 
+                                     class="accordion-collapse collapse @(isExpanded ? "show" : "")" 
+                                     data-bs-parent="#courseSections">
                                     <div class="accordion-body p-0">
-                                        <div class="list-group list-group-flush">
+                                        <ul class="list-group list-group-flush">
                                             @foreach (var lesson in sec.Lessons.OrderBy(l => l.Order))
                                             {
-                                                var progress = Model.LessonProgresses.FirstOrDefault(lp => lp.LessonId == lesson.Id);
-                                                var isCompleted = progress?.IsCompleted ?? false;
-                                                
-                                                <a href="javascript:void(0)"
-                                                   class="list-group-item list-group-item-action"
-                                                   data-lesson-id="@lesson.Id"
-                                                   data-title="@lesson.Title"
-                                                   data-content-type="@lesson.ContentType"
-                                                   data-content-path="@lesson.ContentPath"
-                                                   data-external-url="@lesson.ExternalUrl"
-                                                   onclick="loadLesson(@Model.Id, this)">
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <div class="d-flex align-items-center">
+                                                var isCompleted = Model.CompletedLessonIds.Contains(lesson.Id);
+                                                var isCurrent = lesson.Id == currentLesson?.Id;
+
+                                                <li class="list-group-item @(isCurrent ? "bg-light" : "")">
+                                                    <a href="@Url.Action("Details", new { id = Model.EnrollmentId, lessonId = lesson.Id })"
+                                                       class="text-decoration-none d-flex align-items-center">
+                                                        <span class="me-2">
                                                             @if (isCompleted)
                                                             {
-                                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                                <i class="fas fa-check-circle text-success"></i>
+                                                            }
+                                                            else if (isCurrent)
+                                                            {
+                                                                <i class="fas fa-play-circle text-primary"></i>
                                                             }
                                                             else
                                                             {
-                                                                <i class="bi bi-play-circle me-2"></i>
+                                                                <i class="far fa-circle text-muted"></i>
                                                             }
-                                                            <span>@lesson.Title</span>
-                                                        </div>
+                                                        </span>
+                                                        <span class="flex-grow-1">@lesson.Title</span>
                                                         <small class="text-muted">@lesson.DurationInMinutes min</small>
-                                                    </div>
-                                                </a>
+                                                    </a>
+                                                </li>
                                             }
-                                        </div>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         }
-                    }
-                </div>
+                    </div>
 
-                <!-- Action Buttons -->
-                <div class="mt-4 d-grid gap-2">
-                    @if (!Model.IsCompleted)
-                    {
-                        <form asp-action="MarkComplete" method="post">
-                            <input type="hidden" name="enrollmentId" value="@Model.Id" />
-                            <button type="submit" class="btn btn-success w-100">
-                                <i class="bi bi-check-circle"></i> Mark Course as Complete
-                            </button>
-                        </form>
-                    }
-                    <a asp-controller="Course" asp-action="Details" asp-route-id="@Model.CourseId" 
-                       class="btn btn-outline-secondary">
-                        <i class="bi bi-info-circle"></i> Course Info
-                    </a>
+                    <!-- Course Info Button -->
+                    <div class="p-3 border-top">
+                        <button class="btn btn-outline-secondary w-100">
+                            Course Info
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -132,102 +178,52 @@
 
 @section Scripts {
     <script>
-        function getCsrfToken() {
-            const form = document.getElementById('antiForgeryForm');
-            return form.querySelector('input[name="__RequestVerificationToken"]').value;
-        }
+        // Mark lesson as complete
+        document.getElementById('markCompleteBtn')?.addEventListener('click', async function() {
+            const enrollmentId = this.dataset.enrollmentId;
+            const lessonId = this.dataset.lessonId;
 
-        function setPlayerContent(html) {
-            const container = document.getElementById('playerContainer');
-            container.innerHTML = html;
-        }
-
-        let currentLessonId = null;
-
-        function buildVideoPlayer(src) {
-            return `<video id="lessonVideo" controls class="w-100 h-100">
-                        <source src="${src}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>`;
-        }
-
-        function buildPdfViewer(src) {
-            return `<iframe src="${src}" class="w-100 h-100" frameborder="0"></iframe>`;
-        }
-
-        function buildExternalEmbed(url) {
-            return `<iframe src="${url}" class="w-100 h-100" frameborder="0" allowfullscreen></iframe>`;
-        }
-
-        // contentType expected values (from DTO): Video, Article, PDF, Quiz
-        function loadLesson(enrollmentId, anchor) {
-            const title = anchor.getAttribute('data-title');
-            const type = (anchor.getAttribute('data-content-type') || '').toLowerCase();
-            const path = anchor.getAttribute('data-content-path') || '';
-            const external = anchor.getAttribute('data-external-url') || '';
-
-            let playerHtml = '';
-            if (type === 'video') {
-                const src = external || path;
-                if (src) {
-                    playerHtml = buildVideoPlayer(src);
-                }
-            } else if (type === 'pdf') {
-                const src = external || path;
-                if (src) {
-                    playerHtml = buildPdfViewer(src);
-                }
-            } else if (external) {
-                playerHtml = buildExternalEmbed(external);
-            } else {
-                playerHtml = `<div class="d-flex align-items-center justify-content-center text-white" style="min-height:300px">
-                                <div class="text-center">
-                                    <i class="bi bi-file-earmark-text" style="font-size:3rem;"></i>
-                                    <p class="mt-3 mb-0">${title}</p>
-                                    <small class="text-muted">No preview available</small>
-                                </div>
-                              </div>`;
-            }
-
-            setPlayerContent(playerHtml);
-            currentLessonId = parseInt(anchor.getAttribute('data-lesson-id'));
-
-            // Attach auto-complete on video end
-            const video = document.getElementById('lessonVideo');
-            if (video) {
-                video.addEventListener('ended', function() {
-                    if (currentLessonId) {
-                        markLessonComplete(enrollmentId, currentLessonId);
-                    }
+            try {
+                const response = await fetch('/Enrollment/UpdateProgress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        enrollmentId: parseInt(enrollmentId),
+                        lessonId: parseInt(lessonId),
+                        isCompleted: true,
+                        watchedSeconds: 0
+                    })
                 });
-            }
 
-            // Mark lesson complete (optimistic) when user loads it
-            markLessonComplete(enrollmentId, currentLessonId);
-        }
-
-        function markLessonComplete(enrollmentId, lessonId) {
-            fetch('/Enrollment/MarkLessonComplete', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                    'RequestVerificationToken': getCsrfToken()
-                },
-                body: `enrollmentId=${encodeURIComponent(enrollmentId)}&lessonId=${encodeURIComponent(lessonId)}`
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data && data.success) {
-                    // Update overall progress bar without reload
-                    const progressBar = document.querySelector('.progress-bar');
-                    if (progressBar) {
-                        progressBar.style.width = (data.progress || 0) + '%';
-                    }
+                if (response.ok) {
+                    location.reload();
                 }
-            })
-            .catch(() => {});
-        }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
     </script>
 }
 
+@functions {
+    string GetYouTubeVideoId(string url)
+    {
+        if (string.IsNullOrEmpty(url)) return null;
 
+        // Extract video ID from various YouTube URL formats
+        var uri = new Uri(url);
+        
+        // youtu.be/VIDEO_ID
+        if (uri.Host == "youtu.be")
+        {
+            return uri.AbsolutePath.TrimStart('/');
+        }
+        
+        // youtube.com/watch?v=VIDEO_ID
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        return query["v"];
+    }
+}

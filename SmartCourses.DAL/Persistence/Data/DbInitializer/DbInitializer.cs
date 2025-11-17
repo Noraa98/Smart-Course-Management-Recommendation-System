@@ -45,6 +45,8 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
             SeedCategories(options);
             SeedSkills(options);
             SeedCourses(options);
+            SeedSections(options);  
+            SeedLessons(options);   
         }
 
         private void SeedRoles(JsonSerializerOptions options)
@@ -143,7 +145,7 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
 
                 if (!File.Exists(path))
                 {
-                    Console.WriteLine($"❌ Error: courses.json file not found at {path}");
+                    Console.WriteLine($" Error: courses.json file not found at {path}");
                     return;
                 }
 
@@ -202,7 +204,7 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                     try
                     {
                         _context.SaveChanges();
-                        Console.WriteLine($"✅ Successfully seeded {coursesData.Count} courses.");
+                        Console.WriteLine($"Successfully seeded {coursesData.Count} courses.");
 
                         // Seed realistic sections and lessons with local video paths if none exist
                         if (!_context.Sections.Any() && !_context.Lessons.Any())
@@ -251,14 +253,14 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                                 }
                             }
                             _context.SaveChanges();
-                            Console.WriteLine("✅ Seeded Sections and video Lessons with /videos paths for each course.");
+                            Console.WriteLine("Seeded Sections and video Lessons with /videos paths for each course.");
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"❌ Error saving courses: {ex.Message}");
+                        Console.WriteLine($" Error saving courses: {ex.Message}");
                         if (ex.InnerException != null)
-                            Console.WriteLine($"   Inner Exception: {ex.InnerException.Message}");
+                            Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
                     }
                 }
                 else
@@ -271,6 +273,72 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                 Console.WriteLine("ℹ️ Courses already exist. Skipping seed.");
             }
         }
+
+
+        private void SeedSections(JsonSerializerOptions options)
+        {
+            if (!_context.Sections.Any())
+            {
+                var path = Path.Combine(AppContext.BaseDirectory, "Persistence", "Data", "Seeds", "sections.json");
+
+                if (!File.Exists(path))
+                {
+                    Console.WriteLine($"sections.json not found");
+                    return;
+                }
+
+                var data = File.ReadAllText(path);
+                var sections = JsonSerializer.Deserialize<List<Section>>(data, options);
+
+                if (sections?.Count > 0)
+                {
+                    foreach (var section in sections)
+                    {
+                        section.CreatedBy = "System";
+                        section.LastModifiedBy = "System";
+                        section.CreatedOn = DateTime.UtcNow;
+                        section.LastModifiedOn = DateTime.UtcNow;
+                    }
+
+                    _context.Sections.AddRange(sections);
+                    _context.SaveChanges();
+                    Console.WriteLine($"Successfully seeded {sections.Count} sections.");
+                }
+            }
+        }
+
+        private void SeedLessons(JsonSerializerOptions options)
+        {
+            if (!_context.Lessons.Any())
+            {
+                var path = Path.Combine(AppContext.BaseDirectory, "Persistence", "Data", "Seeds", "lessons.json");
+
+                if (!File.Exists(path))
+                {
+                    Console.WriteLine($"⚠️ lessons.json not found");
+                    return;
+                }
+
+                var data = File.ReadAllText(path);
+                var lessons = JsonSerializer.Deserialize<List<Lesson>>(data, options);
+
+                if (lessons?.Count > 0)
+                {
+                    foreach (var lesson in lessons)
+                    {
+                        lesson.CreatedBy = "System";
+                        lesson.LastModifiedBy = "System";
+                        lesson.CreatedOn = DateTime.UtcNow;
+                        lesson.LastModifiedOn = DateTime.UtcNow;
+                    }
+
+                    _context.Lessons.AddRange(lessons);
+                    _context.SaveChanges();
+                    Console.WriteLine($"✅ Successfully seeded {lessons.Count} lessons.");
+                }
+            }
+        }
+
 
         // Helper class for deserializing JSON (add this inside DbInitializer class)
         private class CourseJsonModel

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SmartCourses.BLL.Models.DTOs.Enrollment_ReviewDTOs;
 using SmartCourses.BLL.Services.Contracts;
+using SmartCourses.PL.ViewModels;
 using System.Security.Claims;
 
 namespace SmartCourses.PL.Controllers
@@ -76,18 +77,55 @@ namespace SmartCourses.PL.Controllers
 
         // Enrollment Details (Course Player)
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> Details(int id, int? lessonId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _enrollmentService.GetEnrollmentDetailsAsync(id, userId!);
+            var result = await _enrollmentService.GetEnrollmentDetailsAsync(id, userId);
 
             if (!result.IsSuccess)
-            {
-                TempData["Error"] = result.Errors.FirstOrDefault();
-                return RedirectToAction(nameof(MyCourses));
-            }
+                return NotFound();
 
-            return View(result.Data);
+            var enrollment = result.Data;
+            var allLessons = enrollment.Course.Sections
+                  .OrderBy(s => s.Order)
+                  .SelectMany(s => s.Lessons.OrderBy(l => l.Order))
+                  .ToList();
+
+
+            // Get current lesson
+            var currentLesson = lessonId.HasValue
+                ? allLessons.FirstOrDefault(l => l.Id == lessonId.Value)
+                : allLessons.FirstOrDefault();
+
+            if (currentLesson == null)
+                return NotFound();
+
+            // Get previous/next lessons
+            var currentIndex = allLessons.IndexOf(currentLesson);
+            var previousLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
+            var nextLesson = currentIndex < allLessons.Count - 1 ? allLessons[currentIndex + 1] : null;
+
+            // Get completed lessons
+            var completedLessonIds = enrollment.LessonProgresses
+                .Where(lp => lp.IsCompleted)
+                .Select(lp => lp.LessonId)
+                .ToList();
+
+            var viewModel = new EnrollmentDetailsViewModel
+            {
+                EnrollmentId = enrollment.Id,
+                Course = enrollment.Course,
+                CurrentLesson = currentLesson,
+                PreviousLessonId = previousLesson?.Id,
+                NextLessonId = nextLesson?.Id,
+                TotalLessons = allLessons.Count,
+                CompletedLessons = completedLessonIds.Count,
+                ProgressPercent = enrollment.ProgressPercent,
+                CompletedLessonIds = completedLessonIds
+            };
+
+            return View(viewModel);
         }
 
         // Enroll in Course

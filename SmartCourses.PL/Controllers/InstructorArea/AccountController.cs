@@ -18,13 +18,13 @@ namespace SmartCourses.PL.Controllers.InstructorArea
 		}
 
 		// Allow GET logout for area route: /Instructor/Account/Logout
-		[HttpGet]
+		[HttpPost]
 		[AllowAnonymous]
 		public async Task<IActionResult> Logout()
 		{
 			await _authService.LogoutAsync();
 			TempData["Success"] = "You have been logged out successfully.";
-			return RedirectToAction("Index", "Home", new { area = "" });
+			return RedirectToAction("Login", "Account", new { area = "" });
 		}
 	}
 }

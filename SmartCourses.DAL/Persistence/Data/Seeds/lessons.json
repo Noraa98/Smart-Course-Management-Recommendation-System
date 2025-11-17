@@ -1,0 +1,202 @@
+[
+  {
+    "SectionId": 1,
+    "Title": "C# Tutorial - Full Course for Beginners",
+    "Description": "Complete C# programming course from basics to advanced",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=GhQdlIFylQ8",
+    "DurationInMinutes": 273,
+    "Order": 1,
+    "IsFree": true
+  },
+  {
+    "SectionId": 1,
+    "Title": "Introduction to C# Programming",
+    "Description": "Getting started with C# development",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=M5ugY7fWydE",
+    "DurationInMinutes": 45,
+    "Order": 2,
+    "IsFree": true
+  },
+  {
+    "SectionId": 1,
+    "Title": "Variables and Data Types in C#",
+    "Description": "Understanding C# data types and variables",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=wxznTygnRfQ",
+    "DurationInMinutes": 30,
+    "Order": 3,
+    "IsFree": false
+  },
+  {
+    "SectionId": 2,
+    "Title": "Control Flow in C#",
+    "Description": "If statements, loops, and switch cases",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=ZH3cjb2JfUM",
+    "DurationInMinutes": 35,
+    "Order": 1,
+    "IsFree": false
+  },
+  {
+    "SectionId": 2,
+    "Title": "Working with Arrays",
+    "Description": "Arrays and collections in C#",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=qRJG1qK-TwQ",
+    "DurationInMinutes": 28,
+    "Order": 2,
+    "IsFree": false
+  },
+  {
+    "SectionId": 2,
+    "Title": "Methods and Functions",
+    "Description": "Creating reusable code with methods",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=pTB0EiLXUC8",
+    "DurationInMinutes": 32,
+    "Order": 3,
+    "IsFree": false
+  },
+  {
+    "SectionId": 3,
+    "Title": "Classes and Objects",
+    "Description": "Object-oriented programming fundamentals",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=VzPDNNqGw3g",
+    "DurationInMinutes": 40,
+    "Order": 1,
+    "IsFree": false
+  },
+  {
+    "SectionId": 3,
+    "Title": "Inheritance in C#",
+    "Description": "Code reuse through inheritance",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=Zs9Yqhbf9YY",
+    "DurationInMinutes": 35,
+    "Order": 2,
+    "IsFree": false
+  },
+  {
+    "SectionId": 4,
+    "Title": "ASP.NET Core Tutorial for Beginners",
+    "Description": "Introduction to ASP.NET Core web development",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=hZ1DASYd9rk",
+    "DurationInMinutes": 180,
+    "Order": 1,
+    "IsFree": true
+  },
+  {
+    "SectionId": 4,
+    "Title": "MVC Pattern Explained",
+    "Description": "Understanding Model-View-Controller architecture",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=1ck9LIBxO14",
+    "DurationInMinutes": 25,
+    "Order": 2,
+    "IsFree": false
+  },
+  {
+    "SectionId": 5,
+    "Title": "Entity Framework Core Tutorial",
+    "Description": "Database access with EF Core",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=qkJ9keBmQWo",
+    "DurationInMinutes": 45,
+    "Order": 1,
+    "IsFree": false
+  },
+  {
+    "SectionId": 5,
+    "Title": "CRUD Operations with EF Core",
+    "Description": "Create, Read, Update, Delete with Entity Framework",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=0d-BXnZ0hPw",
+    "DurationInMinutes": 38,
+    "Order": 2,
+    "IsFree": false
+  },
+  {
+    "SectionId": 7,
+    "Title": "Python for Beginners - Full Course",
+    "Description": "Complete Python programming tutorial",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=rfscVS0vtbw",
+    "DurationInMinutes": 270,
+    "Order": 1,
+    "IsFree": true
+  },
+  {
+    "SectionId": 7,
+    "Title": "Python Data Structures",
+    "Description": "Lists, tuples, dictionaries, and sets",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=kqtD5dpn9C8",
+    "DurationInMinutes": 35,
+    "Order": 2,
+    "IsFree": false
+  },
+  {
+    "SectionId": 8,
+    "Title": "NumPy Tutorial for Beginners",
+    "Description": "Working with numerical arrays in Python",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=QUT1VHiLmmI",
+    "DurationInMinutes": 58,
+    "Order": 1,
+    "IsFree": false
+  },
+  {
+    "SectionId": 8,
+    "Title": "Pandas Tutorial",
+    "Description": "Data manipulation with Pandas library",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=vmEHCJofslg",
+    "DurationInMinutes": 120,
+    "Order": 2,
+    "IsFree": false
+  },
+  {
+    "SectionId": 10,
+    "Title": "Machine Learning Course for Beginners",
+    "Description": "Introduction to machine learning concepts",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=NWONeJKn6kc",
+    "DurationInMinutes": 300,
+    "Order": 1,
+    "IsFree": true
+  },
+  {
+    "SectionId": 13,
+    "Title": "Angular Tutorial for Beginners",
+    "Description": "Complete Angular course from scratch",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=3qBXWUpoPHo",
+    "DurationInMinutes": 180,
+    "Order": 1,
+    "IsFree": true
+  },
+  {
+    "SectionId": 13,
+    "Title": "Angular Components Deep Dive",
+    "Description": "Understanding Angular components",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=23o0evRtrFI",
+    "DurationInMinutes": 45,
+    "Order": 2,
+    "IsFree": false
+  },
+  {
+    "SectionId": 24,
+    "Title": "Flutter Tutorial for Beginners",
+    "Description": "Build mobile apps with Flutter",
+    "ContentType": 1,
+    "ExternalUrl": "https://www.youtube.com/watch?v=1ukSR1GRtMU",
+    "DurationInMinutes": 240,
+    "Order": 1,
+    "IsFree": true
+  }
+]
