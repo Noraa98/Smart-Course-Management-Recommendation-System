@@ -1,9 +1,12 @@
 ﻿@using SmartCourses.BLL.Models.DTOs.CourseDTOs
+@model CourseDto
+
 @{
     ViewData["Title"] = "Home";
     var featuredCourses = ViewBag.FeaturedCourses as List<CourseListDto> ?? new List<CourseListDto>();
     var recentCourses = ViewBag.RecentCourses as List<CourseListDto> ?? new List<CourseListDto>();
     var categories = ViewBag.Categories as List<CategoryDto> ?? new List<CategoryDto>();
+    var placeholder = Url.Content("~/images/course-placeholder.svg");
 }
 
 <!-- Hero Section -->
@@ -75,18 +78,16 @@
             <div class="row g-4">
                 @foreach (var course in featuredCourses.Take(3))
                 {
+                    var imgPath = !string.IsNullOrEmpty(course.ThumbnailPath)
+                    ? (course.ThumbnailPath.StartsWith("http", System.StringComparison.OrdinalIgnoreCase)
+                    ? course.ThumbnailPath
+                    : Url.Content($"~/{course.ThumbnailPath.TrimStart('/')}"))
+                    : placeholder;
+
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 shadow-sm border-0">
-                            @if (!string.IsNullOrEmpty(course.ThumbnailPath))
-                            {
-                                <img src="~/@course.ThumbnailPath" class="card-img-top" alt="@course.Title" style="height: 200px; object-fit: cover;">
-                            }
-                            else
-                            {
-                                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                                    <i class="bi bi-book text-white" style="font-size: 4rem;"></i>
-                                </div>
-                            }
+                            <img src="@imgPath" class="card-img-top" alt="@course.Title" style="height: 200px; object-fit: cover;">
+
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <span class="badge bg-primary">@course.Level</span>
@@ -99,6 +100,7 @@
                                         <span class="badge bg-success">Free</span>
                                     }
                                 </div>
+
                                 <h5 class="card-title">
                                     <a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id"
                                        class="text-decoration-none text-dark">
@@ -106,22 +108,21 @@
                                     </a>
                                 </h5>
                                 <p class="card-text text-muted small">@course.ShortDescription</p>
+
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">
-                                        <i class="bi bi-person"></i> @course.InstructorName
-                                    </small>
+                                    <small class="text-muted"><i class="bi bi-person"></i> @course.InstructorName</small>
                                     <div>
                                         <i class="bi bi-star-fill text-warning"></i>
                                         <span>@course.AverageRating.ToString("N1")</span>
                                         <small class="text-muted">(@course.ReviewCount)</small>
                                     </div>
                                 </div>
+
                                 <div class="mt-2">
-                                    <small class="text-muted">
-                                        <i class="bi bi-people-fill"></i> @course.EnrollmentCount students
-                                    </small>
+                                    <small class="text-muted"><i class="bi bi-people-fill"></i> @course.EnrollmentCount students</small>
                                 </div>
                             </div>
+
                             <div class="card-footer bg-white border-0">
                                 <a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id"
                                    class="btn btn-primary w-100">
@@ -150,18 +151,15 @@
             <div class="row g-4">
                 @foreach (var course in recentCourses.Take(4))
                 {
+                    var imgPath = !string.IsNullOrEmpty(course.ThumbnailPath)
+                    ? (course.ThumbnailPath.StartsWith("http", System.StringComparison.OrdinalIgnoreCase)
+                    ? course.ThumbnailPath
+                    : Url.Content($"~/{course.ThumbnailPath.TrimStart('/')}"))
+                    : placeholder;
+
                     <div class="col-md-6 col-lg-3">
                         <div class="card h-100 shadow-sm border-0">
-                            @if (!string.IsNullOrEmpty(course.ThumbnailPath))
-                            {
-                                <img src="~/@course.ThumbnailPath" class="card-img-top" alt="@course.Title" style="height: 150px; object-fit: cover;">
-                            }
-                            else
-                            {
-                                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 150px;">
-                                    <i class="bi bi-book text-white" style="font-size: 3rem;"></i>
-                                </div>
-                            }
+                            <img src="@imgPath" class="card-img-top" alt="@course.Title" style="height: 150px; object-fit: cover;">
                             <div class="card-body">
                                 <span class="badge bg-info mb-2">New</span>
                                 <h6 class="card-title">
@@ -170,9 +168,7 @@
                                         @course.Title
                                     </a>
                                 </h6>
-                                <small class="text-muted d-block">
-                                    <i class="bi bi-person"></i> @course.InstructorName
-                                </small>
+                                <small class="text-muted d-block"><i class="bi bi-person"></i> @course.InstructorName</small>
                             </div>
                         </div>
                     </div>
@@ -207,8 +203,9 @@
         .hover-card {
             transition: transform 0.2s;
         }
-        .hover-card:hover {
-            transform: translateY(-5px);
-        }
+
+            .hover-card:hover {
+                transform: translateY(-5px);
+            }
     </style>
 }

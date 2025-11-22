@@ -192,6 +192,7 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                             DurationInHours = courseData.DurationInHours,
                             CategoryId = categoryId,
                             InstructorId = actualInstructorId,
+                            ThumbnailPath = string.IsNullOrWhiteSpace(courseData.ThumbnailPath) ? null : courseData.ThumbnailPath,
                             CreatedBy = courseData.CreatedBy,
                             LastModifiedBy = courseData.LastModifiedBy,
                             CreatedOn = DateTime.UtcNow,
@@ -206,55 +207,8 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                         _context.SaveChanges();
                         Console.WriteLine($"Successfully seeded {coursesData.Count} courses.");
 
-                        // Seed realistic sections and lessons with local video paths if none exist
-                        if (!_context.Sections.Any() && !_context.Lessons.Any())
-                        {
-                            var courses = _context.Courses.ToList();
-                            foreach (var c in courses)
-                            {
-                                // Create two sections per course
-                                for (int s = 1; s <= 2; s++)
-                                {
-                                    var section = new Section
-                                    {
-                                        Title = s == 1 ? "Getting Started" : "Core Concepts",
-                                        Description = s == 1 ? "Introduction and setup" : "Deep dive into key topics",
-                                        Order = s,
-                                        CourseId = c.Id,
-                                        CreatedBy = "System",
-                                        LastModifiedBy = "System",
-                                        CreatedOn = DateTime.UtcNow,
-                                        LastModifiedOn = DateTime.UtcNow
-                                    };
-                                    _context.Sections.Add(section);
-                                    _context.SaveChanges();
-
-                                    // Create three lessons per section with local video paths
-                                    for (int l = 1; l <= 3; l++)
-                                    {
-                                        var minutes = 5 + (l * 3);
-                                        var lesson = new Lesson
-                                        {
-                                            Title = $"Lesson {s}.{l}",
-                                            Description = l == 1 ? "Overview and context" : (l == 2 ? "Hands-on example" : "Summary and next steps"),
-                                            ContentType = ContentType.Video,
-                                            ContentPath = $"/videos/course{c.Id}_s{s}_l{l}.mp4", // Assume placeholder MP4 files exist
-                                            DurationInMinutes = minutes,
-                                            Order = l,
-                                            IsFree = s == 1 && l == 1, // First lesson free
-                                            SectionId = section.Id,
-                                            CreatedBy = "System",
-                                            LastModifiedBy = "System",
-                                            CreatedOn = DateTime.UtcNow,
-                                            LastModifiedOn = DateTime.UtcNow
-                                        };
-                                        _context.Lessons.Add(lesson);
-                                    }
-                                }
-                            }
-                            _context.SaveChanges();
-                            Console.WriteLine("Seeded Sections and video Lessons with /videos paths for each course.");
-                        }
+                        // Do not auto-create sections/lessons here. SeedSections and SeedLessons will populate
+                        // sections and lessons from their JSON files (lessons.json contains ExternalUrl values).
                     }
                     catch (Exception ex)
                     {
@@ -320,7 +274,14 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
                 }
 
                 var data = File.ReadAllText(path);
-                var lessons = JsonSerializer.Deserialize<List<Lesson>>(data, options);
+
+                // Use options without JsonStringEnumConverter so numeric enum values in lessons.json deserialize correctly
+                var lessonOptions = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                var lessons = JsonSerializer.Deserialize<List<Lesson>>(data, lessonOptions);
 
                 if (lessons?.Count > 0)
                 {
@@ -352,6 +313,8 @@ namespace SmartCourses.DAL.Persistence.Data.DbInitializer
             public int DurationInHours { get; set; }
             public string CategoryName { get; set; } = null!;  // Changed from CategoryId
             public int InstructorId { get; set; }  // Temporary, will be mapped to GUID
+            public string ThumbnailPath { get; set; } = string.Empty; // read thumbnail from JSON
+            public string PlaylistId { get; set; } = string.Empty; // optional
             public string CreatedBy { get; set; } = "System";
             public string LastModifiedBy { get; set; } = "System";
         }

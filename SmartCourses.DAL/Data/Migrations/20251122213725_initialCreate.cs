@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SmartCourses.DAL.Migrations
+namespace SmartCourses.DAL.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class FixUserColumnTypes : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

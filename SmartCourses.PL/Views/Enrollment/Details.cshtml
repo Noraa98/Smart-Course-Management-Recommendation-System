@@ -1,176 +1,343 @@
 ﻿@model EnrollmentDetailsViewModel
 
 @{
-    ViewData["Title"] = Model.Course.Title;
+    ViewData["Title"] = Model.Course?.Title ?? "Course Learning";
     var currentLesson = Model.CurrentLesson;
-    var videoId = GetYouTubeVideoId(currentLesson?.ExternalUrl);
+    string videoId = null;
+    bool hasLocalVideo = false;
+    string localVideoSrc = null;
+    bool hasLocalImage = false;
+    string localImageSrc = null;
+
+    // Prepare local media paths and Extract YouTube Video ID
+    if (!string.IsNullOrEmpty(currentLesson?.ContentPath) && string.Equals(currentLesson?.ContentType, "Video", StringComparison.OrdinalIgnoreCase))
+    {
+        // resolve local video path
+        try
+        {
+            localVideoSrc = Url.Content("~/" + currentLesson.ContentPath.TrimStart('/'));
+            if (!string.IsNullOrEmpty(localVideoSrc)) hasLocalVideo = true;
+        }
+        catch
+        {
+            hasLocalVideo = false;
+        }
+    }
+
+    if (!string.IsNullOrEmpty(currentLesson?.ContentPath) && !string.Equals(currentLesson?.ContentType, "Video", StringComparison.OrdinalIgnoreCase))
+    {
+        try
+        {
+            localImageSrc = Url.Content("~/" + currentLesson.ContentPath.TrimStart('/'));
+            if (!string.IsNullOrEmpty(localImageSrc)) hasLocalImage = true;
+        }
+        catch
+        {
+            hasLocalImage = false;
+        }
+    }
+
+    if (!string.IsNullOrEmpty(currentLesson?.ExternalUrl))
+    {
+        var url = currentLesson.ExternalUrl;
+        try
+        {
+            if (url.Contains("youtu.be/"))
+            {
+                videoId = url.Split("youtu.be/")[1].Split('?')[0].Split('&')[0];
+            }
+            else if (url.Contains("youtube.com/watch?v="))
+            {
+                videoId = url.Split("v=")[1].Split('&')[0];
+            }
+            else if (url.Contains("youtube.com/embed/"))
+            {
+                videoId = url.Split("embed/")[1].Split('?')[0].Split('&')[0];
+            }
+        }
+        catch
+        {
+            videoId = null;
+        }
+    }
 }
 
-<div class="container-fluid">
-    <div class="row">
+@* Render anti-forgery token for AJAX calls *@
+@Html.AntiForgeryToken()
+
+<div class="container-fluid p-0">
+    <div class="row g-0">
         <!-- Video Player Section -->
         <div class="col-lg-8">
-            <div class="video-container bg-dark" style="min-height: 500px;">
-                @if (!string.IsNullOrEmpty(videoId))
+            <div class="video-container bg-dark position-relative" style="min-height: 500px;">
+                @if (hasLocalVideo)
+                {
+                    <video id="localVideo" width="100%" height="500" controls style="background:black; display:block;">
+                        <source src="@localVideoSrc" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                }
+                else if (!string.IsNullOrEmpty(videoId))
                 {
                     <!-- YouTube Embed -->
-                    <iframe 
-                        id="videoPlayer"
-                        width="100%" 
-                        height="500" 
-                            src="https://www.youtube.com/embed/@videoId?enablejsapi=1&origin=@(Context.Request.Scheme)://@(Context.Request.Host)"
+                    <iframe id="videoPlayer"
+                            width="100%"
+                            height="500"
+                            src="@($"https://www.youtube.com/embed/{videoId}?autoplay=0&rel=0&modestbranding=1&enablejsapi=1&origin={Context.Request.Scheme}://{Context.Request.Host}")"
                             title="@currentLesson.Title"
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                        allowfullscreen>
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            style="display: block; border: none;">
                     </iframe>
+                }
+                else if (hasLocalImage)
+                {
+                    <img src="@localImageSrc" alt="@currentLesson?.Title" style="width:100%; height:500px; object-fit:cover; display:block;" />
                 }
                 else
                 {
                     <div class="d-flex align-items-center justify-content-center h-100">
-                        <div class="text-center text-white">
-                            <i class="fas fa-play-circle fa-5x mb-3"></i>
-                            <h4>Select a lesson from the right to start</h4>
+                        <div class="text-center text-white p-5">
+                            <i class="fas fa-play-circle" style="font-size: 4rem; opacity: 0.5;"></i>
+                            <h4 class="mt-3">Select a lesson from the right to start</h4>
+                            <p class="text-muted">Choose any lesson to begin learning</p>
                         </div>
                     </div>
                 }
             </div>
 
-            <!-- Course Title -->
-            <div class="mt-4">
-                <h2>@Model.Course.Title</h2>
-                
+            <!-- Course and Lesson Info -->
+            <div class="p-4">
+                <h2 class="mb-2">@Model.Course.Title</h2>
+
                 @if (currentLesson != null)
                 {
-                    <h4 class="text-muted">@currentLesson.Title</h4>
-                    <p>@currentLesson.Description</p>
+                    <div class="mb-3">
+                        <span class="badge bg-primary">Lesson @currentLesson.Order</span>
+                        <span class="badge bg-secondary">@currentLesson.DurationInMinutes minutes</span>
+                    </div>
+                    <h4 class="text-primary mb-3">@currentLesson.Title</h4>
+                    <p class="text-muted">@currentLesson.Description</p>
+
+                    <!-- Navigation Buttons -->
+                    <div class="d-flex justify-content-between align-items-center mt-4 pt-4 border-top">
+                        @if (Model.PreviousLessonId.HasValue)
+                        {
+                            <a href="@Url.Action("Details", new { id = Model.EnrollmentId, lessonId = Model.PreviousLessonId })"
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </a>
+                        }
+                        else
+                        {
+                            <div></div>
+                        }
+
+                        <button type="button"
+                                id="markCompleteBtn"
+                                class="btn btn-success px-4"
+                                data-enrollment-id="@Model.EnrollmentId"
+                                data-lesson-id="@currentLesson.Id">
+                            <i class="fas fa-check-circle"></i> Mark as Complete
+                        </button>
+
+                        @if (Model.NextLessonId.HasValue)
+                        {
+                            <a href="@Url.Action("Details", new { id = Model.EnrollmentId, lessonId = Model.NextLessonId })"
+                               class="btn btn-primary">
+                                Next <i class="fas fa-chevron-right"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-success">
+                                <i class="fas fa-trophy"></i> Course Complete!
+                            </button>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> No lesson selected. Please choose a lesson from the sidebar.
+                    </div>
                 }
             </div>
-
-            <!-- Lesson Controls -->
-            @if (currentLesson != null)
-            {
-                <div class="d-flex justify-content-between mt-4">
-                    @if (Model.PreviousLessonId.HasValue)
-                    {
-                        <a href="@Url.Action("Details", new { id = Model.EnrollmentId, lessonId = Model.PreviousLessonId })" 
-                           class="btn btn-secondary">
-                            <i class="fas fa-chevron-left"></i> Previous Lesson
-                        </a>
-                    }
-                    else
-                    {
-                        <div></div>
-                    }
-
-                    <button id="markCompleteBtn" 
-                            class="btn btn-success"
-                            data-enrollment-id="@Model.EnrollmentId"
-                            data-lesson-id="@currentLesson.Id">
-                        <i class="fas fa-check"></i> Mark as Complete
-                    </button>
-
-                    @if (Model.NextLessonId.HasValue)
-                    {
-                        <a href="@Url.Action("Details", new { id = Model.EnrollmentId, lessonId = Model.NextLessonId })" 
-                           class="btn btn-primary">
-                            Next Lesson <i class="fas fa-chevron-right"></i>
-                        </a>
-                    }
-                    else
-                    {
-                        <div></div>
-                    }
-                </div>
-            }
         </div>
 
         <!-- Course Content Sidebar -->
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Course Content</h5>
-                </div>
-                <div class="card-body p-0">
-                    <!-- Progress Bar -->
-                    <div class="p-3 border-bottom">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Your Progress</span>
-                            <span>@Model.CompletedLessons / @Model.TotalLessons</span>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar bg-success" 
-                                 role="progressbar" 
-                                 style="width: @Model.ProgressPercent%"
-                                 aria-valuenow="@Model.ProgressPercent" 
-                                 aria-valuemin="0" 
-                                 aria-valuemax="100">
-                            </div>
-                        </div>
+        <div class="col-lg-4 border-start">
+            <div class="course-sidebar" style="max-height: 100vh; overflow-y: auto;">
+                <div class="card border-0 rounded-0">
+                    <!-- Header -->
+                    <div class="card-header bg-primary text-white border-0">
+                        <h5 class="mb-0">
+                            <i class="fas fa-book"></i> Course Content
+                        </h5>
                     </div>
 
-                    <!-- Sections and Lessons -->
-                    <div class="accordion" id="courseSections">
-                        @foreach (var sec in Model.Course.Sections.OrderBy(s => s.Order))
-                        {
-                            var sectionId = "section" + sec.Id;
-                            var isExpanded = sec.Lessons.Any(l => l.Id == currentLesson?.Id);
-
-                            <div class="accordion-item border-0">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button @(isExpanded ? "" : "collapsed")" 
-                                            type="button" 
-                                            data-bs-toggle="collapse" 
-                                            data-bs-target="#@sectionId">
-                                        <strong>@sec.Title</strong>
-                                    </button>
-                                </h2>
-                                <div id="@sectionId" 
-                                     class="accordion-collapse collapse @(isExpanded ? "show" : "")" 
-                                     data-bs-parent="#courseSections">
-                                    <div class="accordion-body p-0">
-                                        <ul class="list-group list-group-flush">
-                                            @foreach (var lesson in sec.Lessons.OrderBy(l => l.Order))
-                                            {
-                                                var isCompleted = Model.CompletedLessonIds.Contains(lesson.Id);
-                                                var isCurrent = lesson.Id == currentLesson?.Id;
-
-                                                <li class="list-group-item @(isCurrent ? "bg-light" : "")">
-                                                    <a href="@Url.Action("Details", new { id = Model.EnrollmentId, lessonId = lesson.Id })"
-                                                       class="text-decoration-none d-flex align-items-center">
-                                                        <span class="me-2">
-                                                            @if (isCompleted)
-                                                            {
-                                                                <i class="fas fa-check-circle text-success"></i>
-                                                            }
-                                                            else if (isCurrent)
-                                                            {
-                                                                <i class="fas fa-play-circle text-primary"></i>
-                                                            }
-                                                            else
-                                                            {
-                                                                <i class="far fa-circle text-muted"></i>
-                                                            }
-                                                        </span>
-                                                        <span class="flex-grow-1">@lesson.Title</span>
-                                                        <small class="text-muted">@lesson.DurationInMinutes min</small>
-                                                    </a>
-                                                </li>
-                                            }
-                                        </ul>
-                                    </div>
+                    <div class="card-body p-0">
+                        <!-- Progress Bar -->
+                        <div class="p-3 bg-light border-bottom">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="fw-bold">Your Progress</span>
+                                <span class="text-muted">@Model.CompletedLessons / @Model.TotalLessons lessons</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar bg-success"
+                                     role="progressbar"
+                                     style="width: @Model.ProgressPercent%"
+                                     aria-valuenow="@Model.ProgressPercent"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
                                 </div>
                             </div>
-                        }
-                    </div>
+                            <small class="text-muted d-block mt-1">@Model.ProgressPercent.ToString("F0")% Complete</small>
+                        </div>
 
-                    <!-- Course Info Button -->
-                    <div class="p-3 border-top">
-                        <button class="btn btn-outline-secondary w-100">
-                            Course Info
-                        </button>
+                        <!-- Sections and Lessons -->
+                        <div class="accordion accordion-flush" id="courseSections">
+                            @if (Model.Course?.Sections != null && Model.Course.Sections.Any())
+                            {
+                                foreach (var sec in Model.Course.Sections.OrderBy(s => s.Order))
+                                {
+                                    var sectionId = "section" + sec.Id;
+                                    var hasCurrentLesson = sec.Lessons.Any(l => l.Id == currentLesson?.Id);
+                                    var sectionProgress = sec.Lessons.Count(l => Model.CompletedLessonIds.Contains(l.Id));
+                                    var sectionTotal = sec.Lessons.Count();
+
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button @(hasCurrentLesson ? "" : "collapsed")"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#@sectionId"
+                                                    aria-expanded="@(hasCurrentLesson ? "true" : "false")">
+                                                <div class="w-100 d-flex justify-content-between align-items-center pe-3">
+                                                    <span class="fw-bold">@sec.Title</span>
+                                                    <small class="text-muted">@sectionProgress/@sectionTotal</small>
+                                                </div>
+                                            </button>
+                                        </h2>
+                                        <div id="@sectionId"
+                                             class="accordion-collapse collapse @(hasCurrentLesson ? "show" : "")"
+                                             data-bs-parent="#courseSections">
+                                            <div class="accordion-body p-0">
+                                                <div class="list-group list-group-flush">
+                                                    @foreach (var lesson in sec.Lessons.OrderBy(l => l.Order))
+                                                    {
+                                                        var isCompleted = Model.CompletedLessonIds.Contains(lesson.Id);
+                                                        var isCurrent = lesson.Id == currentLesson?.Id;
+
+                                                        <a href="@Url.Action("Details", new { id = Model.EnrollmentId, lessonId = lesson.Id })"
+                                                           class="list-group-item list-group-item-action border-0 @(isCurrent ? "active" : "")">
+                                                            <div class="d-flex align-items-start">
+                                                                <span class="me-2 mt-1">
+                                                                    @if (isCompleted)
+                                                                    {
+                                                                        <i class="fas fa-check-circle text-success"></i>
+                                                                    }
+                                                                    else if (isCurrent)
+                                                                    {
+                                                                        <i class="fas fa-play-circle text-primary"></i>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <i class="far fa-circle text-muted"></i>
+                                                                    }
+                                                                </span>
+                                                                <div class="flex-grow-1">
+                                                                    <div class="small fw-semibold">@lesson.Title</div>
+                                                                    <small class="text-muted">
+                                                                        <i class="far fa-clock"></i> @lesson.DurationInMinutes min
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="p-3 text-muted">No sections available for this course.</div>
+                            }
+                        </div>
+
+                        <!-- Course Info Button -->
+                        <div class="p-3 border-top">
+                            <button type="button" class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#courseInfoModal">
+                                <i class="fas fa-info-circle"></i> Course Details
+                            </button>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Course Info Modal -->
+<div class="modal fade" id="courseInfoModal" tabindex="-1" aria-labelledby="courseInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="courseInfoModalLabel">
+                    <i class="fas fa-graduation-cap"></i> Course Information
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4>@Model.Course.Title</h4>
+                <p class="text-muted mb-3">@Model.Course.ShortDescription</p>
+                <hr>
+                <p>@Model.Course.Description</p>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <strong><i class="fas fa-user-tie text-primary"></i> Instructor:</strong>
+                            <p class="mb-0">@Model.Course.InstructorName</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong><i class="fas fa-signal text-primary"></i> Level:</strong>
+                            <p class="mb-0">
+                                <span class="badge bg-info">@Model.Course.Level</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <strong><i class="fas fa-clock text-primary"></i> Duration:</strong>
+                            <p class="mb-0">@Model.Course.DurationInHours hours</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong><i class="fas fa-folder text-primary"></i> Category:</strong>
+                            <p class="mb-0">@Model.Course.CategoryName</p>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.Course.Skills?.Any() == true)
+                {
+                    <hr>
+                    <div>
+                        <strong><i class="fas fa-tags text-primary"></i> Skills you'll learn:</strong>
+                        <div class="mt-2">
+                            @foreach (var skill in Model.Course.Skills)
+                            {
+                                <span class="badge bg-secondary me-1 mb-1">@skill.Name</span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -179,51 +346,99 @@
 @section Scripts {
     <script>
         // Mark lesson as complete
-        document.getElementById('markCompleteBtn')?.addEventListener('click', async function() {
-            const enrollmentId = this.dataset.enrollmentId;
-            const lessonId = this.dataset.lessonId;
+        const markCompleteBtn = document.getElementById('markCompleteBtn');
 
-            try {
-                const response = await fetch('/Enrollment/UpdateProgress', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                    },
-                    body: JSON.stringify({
-                        enrollmentId: parseInt(enrollmentId),
-                        lessonId: parseInt(lessonId),
-                        isCompleted: true,
-                        watchedSeconds: 0
-                    })
-                });
+        if (markCompleteBtn) {
+            markCompleteBtn.addEventListener('click', async function() {
+                const enrollmentId = parseInt(this.dataset.enrollmentId);
+                const lessonId = parseInt(this.dataset.lessonId);
+                const btn = this;
 
-                if (response.ok) {
-                    location.reload();
+                // Disable button and show loading
+                btn.disabled = true;
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+                try {
+                    const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                    const token = tokenInput ? tokenInput.value : '';
+
+                    const response = await fetch('/Enrollment/UpdateProgress', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        body: JSON.stringify({
+                            enrollmentId: enrollmentId,
+                            lessonId: lessonId,
+                            isCompleted: true,
+                            watchedSeconds: 0
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Show success state
+                        btn.innerHTML = '<i class="fas fa-check-circle"></i> Completed!';
+                        btn.classList.remove('btn-success');
+                        btn.classList.add('btn-outline-success');
+
+                        // Reload page after 1 second to update progress
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        // Show error
+                        alert('Error: ' + (result.message || 'Failed to update progress'));
+                        btn.disabled = false;
+                        btn.innerHTML = originalContent;
+                    }
+                } catch (error) {
+                    console.error('Error updating progress:', error);
+                    alert('An error occurred. Please try again.');
+                    btn.disabled = false;
+                    btn.innerHTML = originalContent;
                 }
-            } catch (error) {
-                console.error('Error:', error);
+            });
+        }
+
+        // Auto-scroll to current lesson on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const activeLesson = document.querySelector('.list-group-item.active');
+            if (activeLesson) {
+                // Small delay to ensure accordion is expanded
+                setTimeout(() => {
+                    activeLesson.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }, 300);
             }
         });
-    </script>
-}
 
-@functions {
-    string GetYouTubeVideoId(string url)
-    {
-        if (string.IsNullOrEmpty(url)) return null;
-
-        // Extract video ID from various YouTube URL formats
-        var uri = new Uri(url);
-        
-        // youtu.be/VIDEO_ID
-        if (uri.Host == "youtu.be")
-        {
-            return uri.AbsolutePath.TrimStart('/');
+        // If local video ends, auto-click mark as complete (if available)
+        const localVideo = document.getElementById('localVideo');
+        if (localVideo) {
+            localVideo.addEventListener('ended', function() {
+                const btn = document.getElementById('markCompleteBtn');
+                if (btn && !btn.disabled) {
+                    btn.click();
+                }
+            });
         }
-        
-        // youtube.com/watch?v=VIDEO_ID
-        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-        return query["v"];
-    }
+
+        // Video ended event (optional - auto-mark as complete)
+        /*
+        const videoPlayer = document.getElementById('videoPlayer');
+        if (videoPlayer) {
+            videoPlayer.addEventListener('ended', function() {
+                if (markCompleteBtn && !markCompleteBtn.disabled) {
+                    markCompleteBtn.click();
+                }
+            });
+        }
+        */
+    </script>
 }

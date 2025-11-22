@@ -7,7 +7,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=GhQdlIFylQ8",
     "DurationInMinutes": 273,
     "Order": 1,
-    "IsFree": true
+    "IsFree": true,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 1,
@@ -17,7 +19,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=M5ugY7fWydE",
     "DurationInMinutes": 45,
     "Order": 2,
-    "IsFree": true
+    "IsFree": true,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 1,
@@ -27,7 +31,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=wxznTygnRfQ",
     "DurationInMinutes": 30,
     "Order": 3,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 2,
@@ -37,7 +43,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=ZH3cjb2JfUM",
     "DurationInMinutes": 35,
     "Order": 1,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 2,
@@ -47,7 +55,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=qRJG1qK-TwQ",
     "DurationInMinutes": 28,
     "Order": 2,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 2,
@@ -57,7 +67,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=pTB0EiLXUC8",
     "DurationInMinutes": 32,
     "Order": 3,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 3,
@@ -67,7 +79,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=VzPDNNqGw3g",
     "DurationInMinutes": 40,
     "Order": 1,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 3,
@@ -77,7 +91,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=Zs9Yqhbf9YY",
     "DurationInMinutes": 35,
     "Order": 2,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 4,
@@ -87,7 +103,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=hZ1DASYd9rk",
     "DurationInMinutes": 180,
     "Order": 1,
-    "IsFree": true
+    "IsFree": true,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 4,
@@ -97,7 +115,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=1ck9LIBxO14",
     "DurationInMinutes": 25,
     "Order": 2,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 5,
@@ -107,7 +127,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=qkJ9keBmQWo",
     "DurationInMinutes": 45,
     "Order": 1,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 5,
@@ -117,7 +139,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=0d-BXnZ0hPw",
     "DurationInMinutes": 38,
     "Order": 2,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 7,
@@ -127,7 +151,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=rfscVS0vtbw",
     "DurationInMinutes": 270,
     "Order": 1,
-    "IsFree": true
+    "IsFree": true,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 7,
@@ -137,7 +163,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=kqtD5dpn9C8",
     "DurationInMinutes": 35,
     "Order": 2,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 8,
@@ -147,7 +175,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=QUT1VHiLmmI",
     "DurationInMinutes": 58,
     "Order": 1,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 8,
@@ -157,7 +187,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=vmEHCJofslg",
     "DurationInMinutes": 120,
     "Order": 2,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 10,
@@ -167,7 +199,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=NWONeJKn6kc",
     "DurationInMinutes": 300,
     "Order": 1,
-    "IsFree": true
+    "IsFree": true,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 13,
@@ -177,7 +211,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=3qBXWUpoPHo",
     "DurationInMinutes": 180,
     "Order": 1,
-    "IsFree": true
+    "IsFree": true,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 13,
@@ -187,7 +223,9 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=23o0evRtrFI",
     "DurationInMinutes": 45,
     "Order": 2,
-    "IsFree": false
+    "IsFree": false,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   },
   {
     "SectionId": 24,
@@ -197,6 +235,8 @@
     "ExternalUrl": "https://www.youtube.com/watch?v=1ukSR1GRtMU",
     "DurationInMinutes": 240,
     "Order": 1,
-    "IsFree": true
+    "IsFree": true,
+    "CreatedBy": "System",
+    "LastModifiedBy": "System"
   }
 ]

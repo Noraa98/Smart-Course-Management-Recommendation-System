@@ -132,6 +132,11 @@ namespace SmartCourses.PL
             }
 
             app.UseHttpsRedirection();
+
+            // Serve default and static files from wwwroot (images, videos, css, js, svg, etc.)
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             // Authentication must come before Authorization

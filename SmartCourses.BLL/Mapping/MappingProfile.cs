@@ -55,6 +55,7 @@ namespace SmartCourses.BLL.Mapping
          
             // Course Mappings
             CreateMap<Course, CourseDto>()
+                .ForMember(dest => dest.ThumbnailPath, opt => opt.MapFrom(src => src.ThumbnailPath))
                 .ForMember(dest => dest.Level, opt => opt.MapFrom(src => src.Level.ToString()))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
                 .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => $"{src.Instructor.FirstName} {src.Instructor.LastName}"))
@@ -70,6 +71,7 @@ namespace SmartCourses.BLL.Mapping
                     src.Sections.OrderBy(s => s.Order)));
 
             CreateMap<Course, CourseListDto>()
+                .ForMember(dest => dest.ThumbnailPath, opt => opt.MapFrom(src => src.ThumbnailPath))
                 .ForMember(dest => dest.Level, opt => opt.MapFrom(src => src.Level.ToString()))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
                 .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => $"{src.Instructor.FirstName} {src.Instructor.LastName}"))
@@ -101,7 +103,9 @@ namespace SmartCourses.BLL.Mapping
          
             // Lesson Mappings
             CreateMap<Lesson, LessonDto>()
-                .ForMember(dest => dest.ContentType, opt => opt.MapFrom(src => src.ContentType.ToString()));
+                .ForMember(dest => dest.ContentType, opt => opt.MapFrom(src => src.ContentType.ToString()))
+                .ForMember(dest => dest.ExternalUrl, opt => opt.MapFrom(src => src.ExternalUrl))
+                .ForMember(dest => dest.ContentPath, opt => opt.MapFrom(src => src.ContentPath));
 
             CreateMap<LessonCreateDto, Lesson>()
                 .ForMember(dest => dest.ContentType, opt => opt.MapFrom(src => (ContentType)src.ContentType));

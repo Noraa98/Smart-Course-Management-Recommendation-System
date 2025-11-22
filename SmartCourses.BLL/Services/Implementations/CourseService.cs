@@ -75,7 +75,7 @@ namespace SmartCourses.BLL.Services.Implementations
         {
             try
             {
-                // ✅ استخدم IQueryable للفلترة في قاعدة البيانات
+                
                 IQueryable<Course> query = _context.Courses
                     .Include(c => c.Category)
                     .Include(c => c.Instructor)

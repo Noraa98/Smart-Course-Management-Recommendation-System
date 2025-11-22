@@ -60,10 +60,36 @@
 
         <div class="col-lg-4">
             <div class="card shadow-lg">
-                @if (!string.IsNullOrEmpty(Model.ThumbnailPath))
-                {
-                    <img src="~/@Model.ThumbnailPath" class="card-img-top" alt="@Model.Title">
+                @{
+                    // Prepare resolved thumbnail path and placeholder
+                    var placeholder = Url.Content("~/images/course-placeholder.svg");
+                    string resolvedThumb = null;
+                    if (!string.IsNullOrEmpty(Model.ThumbnailPath))
+                    {
+                        var path = Model.ThumbnailPath.Trim();
+                        // If it's an absolute URL (http(s) or protocol-relative) use it directly
+                        if (path.StartsWith("http", System.StringComparison.OrdinalIgnoreCase) || path.StartsWith("//"))
+                        {
+                            resolvedThumb = path;
+                        }
+                        else
+                        {
+                            // Treat as web-relative path under wwwroot
+                            var trimmed = path.TrimStart('~').TrimStart('/');
+                            resolvedThumb = Url.Content("~/" + trimmed);
+                        }
+                    }
                 }
+
+                @if (!string.IsNullOrEmpty(resolvedThumb))
+                {
+                    <img src="@resolvedThumb" class="card-img-top" alt="@Model.Title" onerror="this.onerror=null;this.src='@placeholder'" />
+                }
+                else
+                {
+                    <img src="@placeholder" class="card-img-top" alt="Course Image" />
+                }
+
                 <div class="card-body">
                     @if (Model.Price.HasValue && Model.Price > 0)
                     {
