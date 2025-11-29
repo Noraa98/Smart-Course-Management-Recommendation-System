@@ -1,0 +1,129 @@
+@model SmartCourses.BLL.Models.DTOs.CourseDTOs.CourseDto
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">@Model.Title</h2>
+        <div>
+            <a class="btn btn-outline-secondary me-2" asp-area="Admin" asp-controller="Course" asp-action="Index">Back to Courses</a>
+            <a class="btn btn-primary me-2" asp-area="Admin" asp-controller="Course" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+            <form asp-area="Admin" asp-controller="Course" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this course?')">Delete</button>
+            </form>
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>@Model.Title</h3>
+                    <p class="text-muted">@Model.ShortDescription</p>
+                    <hr />
+                    <h5>Description</h5>
+                    <p>@Model.Description</p>
+
+                    @if (Model.Sections?.Any() == true)
+                    {
+                        <h5 class="mt-4">Sections & Lessons</h5>
+                        <div class="accordion" id="courseSections">
+                            @foreach (var sec in Model.Sections.OrderBy(s => s.Order))
+                            {
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#section_@sec.Id">
+                                            <strong>@sec.Title</strong> <span class="ms-2 badge bg-secondary">@(sec.Lessons?.Count ?? 0) lessons</span>
+                                        </button>
+                                    </h2>
+                                    <div id="section_@sec.Id" class="accordion-collapse collapse" data-bs-parent="#courseSections">
+                                        <div class="accordion-body">
+                                            @if (!string.IsNullOrEmpty(sec.Description))
+                                            {
+                                                <p class="text-muted">@sec.Description</p>
+                                            }
+                                            <ul class="list-group">
+                                                @if (sec.Lessons?.Any() == true)
+                                                {
+                                                    @foreach (var lesson in sec.Lessons.OrderBy(l => l.Order))
+                                                    {
+                                                        <li class="list-group-item">
+                                                            <i class="bi bi-play-circle"></i> @lesson.Title
+                                                            <span class="float-end text-muted">@lesson.DurationInMinutes min</span>
+                                                        </li>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <li class="list-group-item text-muted">No lessons yet</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title">Course Information</h6>
+                            <p><strong>Instructor:</strong> @Model.InstructorName</p>
+                            <p><strong>Category:</strong> @Model.CategoryName</p>
+                            <p><strong>Level:</strong> <span class="badge bg-info">@Model.Level</span></p>
+                            <p><strong>Price:</strong> 
+                                @if (Model.Price.HasValue && Model.Price > 0)
+                                {
+                                    <span>$@Model.Price.Value.ToString("N2")</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">FREE</span>
+                                }
+                            </p>
+                            <p><strong>Status:</strong> 
+                                @if (Model.IsPublished)
+                                {
+                                    <span class="badge bg-success">Published</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">Draft</span>
+                                }
+                            </p>
+                            <p><strong>Enrollments:</strong> @Model.EnrollmentCount</p>
+                            <p><strong>Reviews:</strong> @Model.ReviewCount</p>
+                            @if (Model.ReviewCount > 0)
+                            {
+                                <p><strong>Rating:</strong> 
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    @Model.AverageRating.ToString("N1") / 5.0
+                                </p>
+                            }
+                            <p><strong>Duration:</strong> @Model.DurationInHours hours</p>
+                            @if (Model.Skills?.Any() == true)
+                            {
+                                <p><strong>Skills:</strong></p>
+                                <div>
+                                    @foreach (var skill in Model.Skills)
+                                    {
+                                        <span class="badge bg-light text-dark border me-1">@skill.Name</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

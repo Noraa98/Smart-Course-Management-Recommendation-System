@@ -4,7 +4,7 @@ using SmartCourses.BLL.Models.DTOs;
 using SmartCourses.BLL.Services.Contracts;
 using System.Security.Claims;
 
-namespace SmartCourses.PL.Controllers.AdminArea
+namespace SmartCourses.PL.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Admin")]

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartCourses.BLL.Services.Interfaces.Auth;
 
-namespace SmartCourses.PL.Controllers.InstructorArea
+namespace SmartCourses.PL.Areas.Instructor.InstructorArea
 {
 	[Area("Instructor")]
 	[Authorize(Roles = "Instructor")]

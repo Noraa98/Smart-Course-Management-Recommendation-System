@@ -50,5 +50,8 @@ namespace SmartCourses.BLL.Models.DTOs.CourseDTOs
         public bool IsPublished { get; set; }
 
         public List<int> SkillIds { get; set; } = new();
+
+        // Added to allow admin to change the instructor
+        public string InstructorId { get; set; } = string.Empty;
     }
 }

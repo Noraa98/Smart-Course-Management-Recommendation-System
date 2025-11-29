@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartCourses.BLL.Services.Interfaces.Auth;
 using SmartCourses.DAL.Entities.Identity;
 
-namespace SmartCourses.PL.Controllers.AdminArea
+namespace SmartCourses.PL.Areas.Admin.Controllers
 {
 
         [Area("Admin")]

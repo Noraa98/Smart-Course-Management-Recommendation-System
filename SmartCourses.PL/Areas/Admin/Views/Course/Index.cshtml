@@ -7,7 +7,10 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0">Courses Management</h2>
-        <a class="btn btn-outline-secondary" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Back to Dashboard</a>
+        <div>
+            <a class="btn btn-primary me-2" asp-area="Admin" asp-controller="Course" asp-action="Create">Create Course</a>
+            <a class="btn btn-outline-secondary" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Back to Dashboard</a>
+        </div>
     </div>
 
     @if (TempData["Error"] != null)
@@ -87,11 +90,23 @@
                                 }
                             </td>
                             <td class="text-end">
-                                <a class="btn btn-sm btn-outline-info" 
-                                   asp-area="Admin" 
-                                   asp-controller="Courses" 
-                                   asp-action="Details" 
+                                <a class="btn btn-sm btn-outline-info me-1"
+                                   asp-area="Admin"
+                                   asp-controller="Course"
+                                   asp-action="Details"
                                    asp-route-id="@course.Id">Details</a>
+
+                                <a class="btn btn-sm btn-outline-primary me-1"
+                                   asp-area="Admin"
+                                   asp-controller="Course"
+                                   asp-action="Edit"
+                                   asp-route-id="@course.Id">Edit</a>
+
+                                <form asp-area="Admin" asp-controller="Course" asp-action="Delete" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@course.Id" />
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </form>
                             </td>
                         </tr>
                     }

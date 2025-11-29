@@ -4,30 +4,30 @@ using SmartCourses.BLL.Services.Contracts;
 using SmartCourses.BLL.Services.Interfaces;
 using System.Security.Claims;
 
-namespace SmartCourses.PL.Controllers.InstructorArea
+namespace SmartCourses.PL.Areas.Student.StudentArea
 {
-    [Area("Instructor")]
-    [Authorize(Roles = "Instructor")]
+    [Area("Student")]
+    [Authorize(Roles = "Student")]
     public class DashboardController : Controller
     {
         private readonly IDashboardService _dashboardService;
-        private readonly ICourseService _courseService;
+        private readonly IEnrollmentService _enrollmentService;
         private readonly ILogger<DashboardController> _logger;
 
         public DashboardController(
             IDashboardService dashboardService,
-            ICourseService courseService,
+            IEnrollmentService enrollmentService,
             ILogger<DashboardController> logger)
         {
             _dashboardService = dashboardService;
-            _courseService = courseService;
+            _enrollmentService = enrollmentService;
             _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _dashboardService.GetInstructorDashboardAsync(userId!);
+            var result = await _dashboardService.GetStudentDashboardAsync(userId!);
 
             if (!result.IsSuccess)
             {

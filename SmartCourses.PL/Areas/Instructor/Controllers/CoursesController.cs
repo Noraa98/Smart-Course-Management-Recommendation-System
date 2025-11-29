@@ -5,7 +5,7 @@ using SmartCourses.BLL.Services.Contracts;
 using SmartCourses.BLL.Services.Interfaces;
 using System.Security.Claims;
 
-namespace SmartCourses.PL.Controllers.InstructorArea
+namespace SmartCourses.PL.Areas.Instructor.InstructorArea
 {
     [Area("Instructor")]
     [Authorize(Roles = "Instructor")]

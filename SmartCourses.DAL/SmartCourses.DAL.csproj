@@ -25,6 +25,12 @@
 		<None Update="Persistence\Data\Seeds\users.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="Persistence\Data\Seeds\sections.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Persistence\Data\Seeds\lessons.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="Persistence\Data\Seeds\*.json">

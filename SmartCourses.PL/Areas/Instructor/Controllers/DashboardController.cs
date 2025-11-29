@@ -1,27 +1,33 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SmartCourses.BLL.Services.Contracts;
 using SmartCourses.BLL.Services.Interfaces;
+using System.Security.Claims;
 
-namespace SmartCourses.PL.Controllers.AdminArea
+namespace SmartCourses.PL.Areas.Instructor.InstructorArea
 {
-    [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Area("Instructor")]
+    [Authorize(Roles = "Instructor")]
     public class DashboardController : Controller
     {
         private readonly IDashboardService _dashboardService;
+        private readonly ICourseService _courseService;
         private readonly ILogger<DashboardController> _logger;
 
         public DashboardController(
             IDashboardService dashboardService,
+            ICourseService courseService,
             ILogger<DashboardController> logger)
         {
             _dashboardService = dashboardService;
+            _courseService = courseService;
             _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
-            var result = await _dashboardService.GetAdminDashboardAsync();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _dashboardService.GetInstructorDashboardAsync(userId!);
 
             if (!result.IsSuccess)
             {

@@ -1,33 +1,27 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SmartCourses.BLL.Services.Contracts;
 using SmartCourses.BLL.Services.Interfaces;
-using System.Security.Claims;
 
-namespace SmartCourses.PL.Controllers.StudentArea
+namespace SmartCourses.PL.Areas.Admin.Controllers
 {
-    [Area("Student")]
-    [Authorize(Roles = "Student")]
+    [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class DashboardController : Controller
     {
         private readonly IDashboardService _dashboardService;
-        private readonly IEnrollmentService _enrollmentService;
         private readonly ILogger<DashboardController> _logger;
 
         public DashboardController(
             IDashboardService dashboardService,
-            IEnrollmentService enrollmentService,
             ILogger<DashboardController> logger)
         {
             _dashboardService = dashboardService;
-            _enrollmentService = enrollmentService;
             _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _dashboardService.GetStudentDashboardAsync(userId!);
+            var result = await _dashboardService.GetAdminDashboardAsync();
 
             if (!result.IsSuccess)
             {

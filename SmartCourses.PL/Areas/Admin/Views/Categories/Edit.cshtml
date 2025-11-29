@@ -1,7 +1,6 @@
 @model SmartCourses.BLL.Models.DTOs.CategoryUpdateDto
 @{
     ViewData["Title"] = "Edit Category";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container mt-4">
@@ -10,28 +9,37 @@
         <a class="btn btn-outline-secondary" asp-area="Admin" asp-controller="Categories" asp-action="Index">Back to List</a>
     </div>
 
-    <form asp-area="Admin" asp-controller="Categories" asp-action="Edit" method="post" class="needs-validation" novalidate>
-        @Html.AntiForgeryToken()
-        <input asp-for="Id" type="hidden" />
-        <div class="mb-3">
-            <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+    <div class="card">
+        <div class="card-body">
+            <form asp-area="Admin" asp-controller="Categories" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input asp-for="Id" type="hidden" />
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Category Name</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger small d-block mt-1"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small d-block mt-1"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="IconPath" class="form-label">Icon Path (optional)</label>
+                    <input asp-for="IconPath" class="form-control" />
+                    <span asp-validation-for="IconPath" class="text-danger small d-block mt-1"></span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
         </div>
-        <div class="mb-3">
-            <label asp-for="Description" class="form-label"></label>
-            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="IconPath" class="form-label"></label>
-            <input asp-for="IconPath" class="form-control" />
-            <span asp-validation-for="IconPath" class="text-danger"></span>
-        </div>
-        <button type="submit" class="btn btn-primary">Save Changes</button>
-    </form>
-
-    <partial name="~/Views/Shared/_ValidationScriptsPartial.cshtml" />
+    </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
 
 

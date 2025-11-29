@@ -1,0 +1,114 @@
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model SmartCourses.BLL.Models.DTOs.CourseDTOs.CourseCreateDto
+@{
+    ViewData["Title"] = "Create Course";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Create Course</h2>
+        <a class="btn btn-outline-secondary" asp-area="Admin" asp-controller="Course" asp-action="Index">Back to Courses</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-area="Admin" asp-controller="Course" asp-action="Create" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Title</label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Category</label>
+                        <select asp-for="CategoryId" class="form-select">
+                            <option value="">Select category</option>
+                            @if (ViewBag.Categories is List<SelectListItem> categories)
+                            {
+                                foreach (var cat in categories)
+                                {
+                                    <option value="@cat.Value">@cat.Text</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Short Description</label>
+                        <textarea asp-for="ShortDescription" class="form-control" rows="2"></textarea>
+                        <span asp-validation-for="ShortDescription" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="6"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Level</label>
+                        <select asp-for="Level" class="form-select">
+                            <option value="1">Beginner</option>
+                            <option value="2">Intermediate</option>
+                            <option value="3">Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Duration (hours)</label>
+                        <input asp-for="DurationInHours" class="form-control" type="number" min="1" max="1000" />
+                        <span asp-validation-for="DurationInHours" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Price (optional)</label>
+                        <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Thumbnail URL</label>
+                        <input asp-for="ThumbnailPath" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Instructor</label>
+                        <select name="selectedInstructorId" class="form-select" required>
+                            <option value="">Select instructor</option>
+                            @if (ViewBag.Instructors is List<SelectListItem> instructors)
+                            {
+                                foreach (var ins in instructors)
+                                {
+                                    <option value="@ins.Value">@ins.Text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Skills (hold Ctrl to select multiple)</label>
+                        <select multiple class="form-select" name="skillIds" size="5">
+                            @if (ViewBag.Skills is List<SelectListItem> skills)
+                            {
+                                foreach (var skill in skills)
+                                {
+                                    <option value="@skill.Value">@skill.Text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 text-end">
+                        <button type="submit" class="btn btn-primary">Create Course</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
