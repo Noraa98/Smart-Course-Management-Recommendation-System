@@ -879,15 +879,15 @@ Contributions are welcome! Please follow these guidelines:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ---
 
 ## 👨‍💻 Developer
 
 **Noura Ahmed**
-- LinkedIn: [your-profile](https://www.linkedin.com/in/noura-ahmed-36779b304)
-- GitHub: [@yourusername](https://github.com/Noraa98)
+- LinkedIn:(https://www.linkedin.com/in/noura-ahmed-36779b304)
+- GitHub: (https://github.com/Noraa98)
 - Email: noura.ahmed7258@gmail.com
 
 ---
