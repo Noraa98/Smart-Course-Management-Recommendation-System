@@ -17,7 +17,7 @@ namespace SmartCourses.PL
             var builder = WebApplication.CreateBuilder(args);
 
 
-            // Configure Serilog
+            // Configure Serial log
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(builder.Configuration)
                 .WriteTo.Console()
