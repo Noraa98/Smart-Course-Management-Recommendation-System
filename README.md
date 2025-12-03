@@ -202,9 +202,9 @@ Result<T> { bool IsSuccess, T Data, List<string> Errors }
 ## 🛠️ Technical Stack
 
 ### Backend
-- **Framework:** ASP.NET Core 8.0 MVC
+- **Framework:** ASP.NET Core 9.0 MVC
 - **Language:** C# 12
-- **ORM:** Entity Framework Core 8.0
+- **ORM:** Entity Framework Core 9.0
 - **Database:** SQL Server 2019+
 - **Authentication:** ASP.NET Core Identity
 - **Authorization:** Role-based & Policy-based
@@ -885,7 +885,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Developer
 
-**[Noura Ahmed]**
+**Noura Ahmed**
 - LinkedIn: [your-profile](https://www.linkedin.com/in/noura-ahmed-36779b304)
 - GitHub: [@yourusername](https://github.com/Noraa98)
 - Email: noura.ahmed7258@gmail.com
@@ -918,6 +918,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **⭐ Star this repository if you find it helpful!**
 
-Made with ❤️ by [Noura Ahmed]
+Made with ❤️ by Noura Ahmed
 
 </div>
