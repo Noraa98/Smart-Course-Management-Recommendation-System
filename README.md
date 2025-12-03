@@ -1,6 +1,6 @@
 # 🎓 SmartCourses - Enterprise Learning Management System
 
-[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-MVC-512BD4)](https://asp.net/)
 [![Entity Framework](https://img.shields.io/badge/Entity%20Framework-Core-512BD4)](https://docs.microsoft.com/ef/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3?logo=bootstrap)](https://getbootstrap.com/)
@@ -885,10 +885,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Developer
 
-**[Your Name]**
-- LinkedIn: [your-profile](https://linkedin.com/in/yourprofile)
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
+**[Noura Ahmed]**
+- LinkedIn: [your-profile](https://www.linkedin.com/in/noura-ahmed-36779b304)
+- GitHub: [@yourusername](https://github.com/Noraa98)
+- Email: noura.ahmed7258@gmail.com
 
 ---
 
@@ -918,6 +918,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **⭐ Star this repository if you find it helpful!**
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by [Noura Ahmed]
 
 </div>
